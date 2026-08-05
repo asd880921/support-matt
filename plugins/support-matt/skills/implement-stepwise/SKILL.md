@@ -73,6 +73,29 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
       seam: `POST /x` HTTP 層
 ```
 
+規劃階段只寫 `seam`；`tests` 與 `涵蓋` 兩行在該 commit 完成勾選時才補上（見「邊做邊記」）。
+
+## 邊做邊記
+
+勾選 `[x]` 時，在該項下方補上兩行——本次寫出的測試，以及它們涵蓋的 ticket 驗收條件編號：
+
+```md
+- [x] 1. feat: 建立 X 的資料結構與讀取路徑
+      seam: `loadX()` 公開介面
+      tests: TestDmsDeviceMovementService.查詢僅納入確認狀態的工單
+             TestDmsDeviceMovementService.生效數量為零的明細不出現
+      涵蓋: 驗收條件 #8, #9
+```
+
+規則：
+
+- 只記**本次 commit 實際寫出**的測試，不要把既有測試算進來。
+- 測試名稱寫到可直接搜尋的程度（檔名 + 測試方法名）。
+- 本次沒有對應到任何驗收條件時（例如純重構、設定檔），`涵蓋` 寫「無」，不要硬湊。
+- 驗收條件編號以該 ticket 內的出現順序為準。
+
+**這份記錄是線索，不是證明。** 它由實作者自己填寫，等同自我聲明；真正的驗證由 `to-acceptance-map` 在開發完畢後於獨立 session 執行。因此不需要為了「好看」而美化——沒寫測試就照實留空，那正是驗證階段要抓的東西。
+
 ## 執行模式
 
 1. 找出第一個 `[ ]` 項目。
@@ -82,7 +105,7 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 5. 回報本次變更；列出應包含與應排除的檔案；給出建議的 commit message。
 6. **停止，等待使用者確認。**
 7. 使用者確認後，執行 `git add` 與 `git commit`。
-8. 將該項從 `[ ]` 改為 `[x]`。
+8. 將該項從 `[ ]` 改為 `[x]`，並在該項下方補記本次寫出的測試，以及它們涵蓋的驗收條件編號（見「邊做邊記」）。
 9. **停止**，並提醒使用者：**下一個 commit 請清空 context 後重新調用本 skill**。
 
 ### 為什麼每個 commit 之間都要清 context
@@ -205,5 +228,5 @@ git commit -m "feat: 某個 commit 標題"
 ## 下一步引導（純提示，不主動調用）
 
 - **本輪 commit 完成、仍有未完成項目** → 告知剩餘項目數，並明確提醒**清空 context 後再調用本 skill 做下一個 commit**。
-- **checklist 全部完成** → 已於收尾回報完整測試與驗收條件核對結果。提示使用者清空 context，取下一張 blocker 已滿足的 ticket 重新調用本 skill。
+- **checklist 全部完成** → 已於收尾回報完整測試與驗收條件核對結果。提示使用者清空 context，取下一張 blocker 已滿足的 ticket 重新調用本 skill。**整條 branch 的 ticket 全部完成後**，提示使用者開新 session 執行 `to-acceptance-map`，做獨立的驗收覆蓋盤點。
 - **需要回頭修正** → commit 級 → 重新規劃 checklist；ticket 級（範圍、驗收條件有誤）→ 回到 `to-tickets`。

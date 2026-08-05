@@ -1,6 +1,6 @@
 # support-matt
 
-套件版本：`v0.3.0`
+套件版本：`v0.4.0`
 更新時間：2026-08-05
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json，發版時一併更新此處版本與日期 -->
@@ -24,17 +24,22 @@
 | `to-engineering-spec` | 在 `to-spec` 與 `to-tickets` 之間，建立並維護一份正式的開發規格文件 `engineering-spec.md`（系統分析 + 技術設計 + 實作約束）。 |
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
 | `implement-stepwise` | 取代 `implement`：首次調用把 ticket 拆成 commit checklist 並寫回 ticket，之後一次做一個 commit，經確認後自動 commit 再停。不跑 `code-review`。 |
+| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。同時涵蓋 ticket 驗收條件與 `engineering-spec.md` 的設計檢核點。全程唯讀。 |
 
 掛載位置：
 
 ```
 [setup-matt-preset]  ← 每個 repo 第一次使用前跑一次
 
-grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-tickets → [implement-stepwise]
-                                                 └─ [engineering-spec-deliverable] 隨時可跑
+grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-tickets → [implement-stepwise] ─┐
+                                                 └─ [engineering-spec-deliverable] 隨時可跑        │
+                                                                                                  ↓
+                                    [to-engineering-spec 定稿] ← [to-acceptance-map]（branch 完成後，新 session）
 ```
 
 `implement-stepwise` 取代 Matt 的 `implement`，內部仍調用其 `tdd`，但不調用 `code-review`。
+
+每個 commit 之間、每張 ticket 之間都應清空 context——進度存放在 ticket 的 checklist 裡，這是本套 skill 主要的 token 優勢來源。
 
 ## 待補
 

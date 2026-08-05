@@ -1,0 +1,5 @@
+interface:
+  display_name: "To Acceptance Map"
+  short_description: "獨立盤點驗收項目的自動化測試覆蓋"
+policy:
+  allow_implicit_invocation: false
