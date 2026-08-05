@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Matt Preset"
+  short_description: "以個人慣例初始化 Matt skills 的 per-repo 設定"
+policy:
+  allow_implicit_invocation: false
