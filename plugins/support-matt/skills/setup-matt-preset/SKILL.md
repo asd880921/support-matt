@@ -57,12 +57,12 @@ Matt 規範中放在 repo 根目錄的檔案與資料夾，一律改放到 `.ai/
 | `docs/agents/domain.md` | `.ai/docs/agents/domain.md` |
 | `docs/agents/triage-labels.md` | `.ai/docs/agents/triage-labels.md` |
 | `docs/adr/` | `.ai/docs/adr/` |
-| `CONTEXT.md` | `.ai/CONTEXT.md` |
+| `CONTEXT.md`（根層那份） | `.ai/CONTEXT.md` |
 | `CONTEXT-MAP.md` | `.ai/CONTEXT-MAP.md` |
 
 **這條最容易漏的地方：seed template 的正文裡也寫滿了路徑。** `issue-tracker-local.md` 通篇引用 `.scratch/...`，`domain.md` 引用 `CONTEXT.md`、`docs/adr/` 並畫了目錄樹。寫出檔案時，**必須把 template 內文的每一處路徑一併改寫**，否則下游 skill 讀到的仍是舊路徑，整套設定等於沒生效。改寫後請自行複查一遍：寫出的檔案內不應再出現任何不帶 `.ai/` 前綴的 `.scratch/`、`docs/agents/`、`docs/adr/`、根層 `CONTEXT.md` 或 `CONTEXT-MAP.md`。
 
-**例外**：multi-context 佈局中位於 `src/<context>/docs/adr/` 的 context 專屬 ADR **維持原位不動**——本規則搬移的是「落在專案根目錄」的產物，這些本來就在 `src/` 底下。若使用者希望連這些也搬，會另行說明。
+**例外**：上表搬移的一律是**落在專案根目錄**的產物。multi-context 佈局中位於 `src/` 底下的 context 專屬檔案——`src/<context>/CONTEXT.md` 與 `src/<context>/docs/adr/`——**維持原位不動**，它們刻意貼著程式碼放。若使用者希望連這些也搬，會另行說明。
 
 #### 覆寫 C — CLAUDE.md 改為 `@` 匯入
 
