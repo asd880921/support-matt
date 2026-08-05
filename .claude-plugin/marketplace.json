@@ -1,0 +1,13 @@
+{
+  "name": "support-matt",
+  "owner": {
+    "name": "Hon.Lu"
+  },
+  "plugins": [
+    {
+      "name": "support-matt",
+      "source": "./plugins/support-matt",
+      "description": "掛在 Matt Pocock 工作流上的補強 skill 集。"
+    }
+  ]
+}

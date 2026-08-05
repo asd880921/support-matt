@@ -1,0 +1,20 @@
+{
+  "name": "support-matt",
+  "interface": {
+    "displayName": "Support Matt"
+  },
+  "plugins": [
+    {
+      "name": "support-matt",
+      "source": {
+        "source": "local",
+        "path": "./plugins/support-matt"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
