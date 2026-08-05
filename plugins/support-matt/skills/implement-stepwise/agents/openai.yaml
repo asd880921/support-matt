@@ -1,0 +1,5 @@
+interface:
+  display_name: "Implement Stepwise"
+  short_description: "逐 commit 人工審查的 ticket 實作流程"
+policy:
+  allow_implicit_invocation: false
