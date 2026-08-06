@@ -161,7 +161,9 @@ Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集�
 > Engineering spec: [engineering-spec.md](./engineering-spec.md)
 ```
 
-這是唯一允許對 Matt Spec 做的改動——一行指標，不是內容。它讓下游 skill 在只拿到 `spec.md` 時仍找得到本文件。
+這是**本 skill** 唯一允許對 Matt Spec 做的改動——一行指標，不是內容。它讓下游 skill 在只拿到 `spec.md` 時仍找得到本文件。
+
+需求本身要改時，`spec.md` 的內容由 `to-change-request` 就地 delta 編輯，本 skill 仍然不碰；發現需求層級的改動時，照「衝突處理」停下來，並可提示使用者改跑該 skill。
 
 ## Workflow
 

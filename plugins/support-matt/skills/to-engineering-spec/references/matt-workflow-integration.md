@@ -12,7 +12,7 @@ grill-with-docs → to-spec → to-engineering-spec → 人工確認 → to-tick
 | --- | --- | --- | --- |
 | `CONTEXT.md` | `domain-modeling` | 專案術語 | 需求、設計 |
 | `docs/adr/NNNN-*.md` | `domain-modeling` / `grill-with-docs` | 少量、重要、難以回復且有真實取捨的決策**理由** | 完整設計；ADR 不該長成規格 |
-| `.scratch/<slug>/spec.md` | `to-spec` | **需求、範圍、行為、user stories、測試決策** | 系統分析、資料表結構、交易邊界、可判斷真偽的驗證條件 |
+| `.scratch/<slug>/spec.md` | `to-spec` 建立，`to-change-request` 修訂 | **需求、範圍、行為、user stories、測試決策** | 系統分析、資料表結構、交易邊界、可判斷真偽的驗證條件 |
 | `.scratch/<slug>/engineering-spec.md` | **本 skill** | **系統分析、設計決策、實作約束、驗證條件** | 需求要不要做、做到什麼程度 |
 | `.scratch/<slug>/issues/NN-*.md` | `to-tickets` | 工作切片與其順序 | 需求、架構 |
 | 程式碼與測試 | `implement` | 實際落地證據 | 不自動凌駕已確認規格 |
@@ -88,7 +88,9 @@ Matt 的 `to-tickets` 只在使用者傳入 reference 時才會 fetch，`impleme
 > Engineering spec: [engineering-spec.md](./engineering-spec.md) — 系統分析、設計決策與實作約束的權威。拆票與實作前請一併閱讀。
 ```
 
-這是**唯一**允許對 Matt Spec 做的改動：一行指標，不是內容，不與需求權威競爭。任何 skill 只要 fetch 了 spec.md 就會看到它。
+這是**本 skill 唯一**允許對 Matt Spec 做的改動：一行指標，不是內容，不與需求權威競爭。任何 skill 只要 fetch 了 spec.md 就會看到它。
+
+需求層級的內容改動由 `to-change-request` 負責（開發中途的再入點：grill 之後同步兩份文件並追加 ticket）。它是 `spec.md` 的合法修訂者，但也只做受影響段落的 delta 編輯，不重寫整份。
 
 ### 2. 呼叫時明講兩個路徑（必做）
 
