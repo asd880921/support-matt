@@ -90,17 +90,19 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 ## 4. 收尾
 
-1. **跑一次完整測試套件**。
-2. **逐條核對 ticket 的 `Acceptance criteria`**，回報每一條是達成、未達成或部分達成，並指出對應的程式碼或測試。
-3. 回報全部 commit 清單，以及每個 commit 的測試與涵蓋的驗收條件（邊做邊記的內容）。
-4. 進入下一節的 code-review 詢問。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
+
+回報時一併列出全部 commit 清單，以及每個 commit 的測試與涵蓋的驗收條件（邊做邊記的內容）——本 skill 不寫回 ticket，這份回報是它唯一的留存處。
+
+接著進入下一節的 code-review 詢問。
 
 ## 5. code-review 詢問
 
 **問，不要自己跑。** 明確告訴使用者三個選項與各自的取捨：
 
 ```text
-Ticket 已完成，N 個 commit，完整測試套件通過，驗收條件 M/M 達成。
+Ticket 已完成，N 個 commit，受影響範圍測試通過，驗收條件 M/M 達成。
+（完整測試套件未跑——整條 branch 結束後由 to-acceptance-map 執行）
 
 要執行 code-review 嗎？
   1. 不跑 —— 你自己讀一次 `git diff <起點>...HEAD`。零 token，但要自己看完 X 行。

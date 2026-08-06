@@ -124,14 +124,12 @@ agentic loop 的成本是「每回合的 context 大小」對回合數的累加�
 
 ## 收尾（checklist 全部完成時）
 
-1. **跑一次完整測試套件**。
-2. **逐條核對 ticket 的 `Acceptance criteria`**，回報每一條是達成、未達成或部分達成，並指出對應的程式碼或測試。
-3. 若完整測試套件出現失敗、或有驗收條件未達成：**不要就地修掉**。回報問題，並建議在 checklist 追加新的 commit item 處理，維持逐 commit 審查的節奏。
-4. 全部通過後回報 ticket 完成。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**。
 
-此步驟**一律在本 session 內完成，不得開 sub-agent**。
+本 skill 特有的兩點：
 
-**是否執行 `/code-review` 由使用者決定，本 skill 不主動調用也不主動詢問。** 逐 commit 審查已經涵蓋了單點的正確性與慣例問題；`/code-review` 的價值在跨 commit 的結構性問題（重複邏輯、命名不一致、變更散落），那是逐片審查結構上看不見的。需要時使用者可自行調用，或參考 `implement-oneshot` 的「code-review 詢問」一節所述的瘦身做法。
+- **發現問題時，建議追加新的 commit item 處理**，維持逐 commit 審查的節奏，不要把修正混進已完成的項目。
+- 詢問冷眼審查時附註：**你已逐 commit 審查過，`/code-review` 的需求通常較低**。它剩下的價值主要在跨 commit 的結構性問題（重複邏輯、命名不一致、變更散落），那是逐片審查結構上看不見的。瘦身參數見 `implement-oneshot` 的「code-review 詢問」一節。
 
 ## 暫停與回報
 
