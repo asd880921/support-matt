@@ -40,7 +40,7 @@ Matt Spec 已經寫了 user stories、Out of Scope、Testing Decisions。本文�
 | 使用情境清單 | 不重寫 user stories。需要指涉某條時寫 `見 spec.md User Story 12：審核者可退回申請單` |
 | 不做什麼 | 「二、範圍與非範圍」只寫**系統邊界**（哪個模組不動、哪張表不碰）；產品層級的 Out of Scope 引用 Matt Spec |
 | 測試在哪個 seam | Matt Spec 的 Testing Decisions 已定案時引用它；未定案時本文件以「實作方向」提出 |
-| 驗收基準 | 不重寫。本文件只補「設計檢核點」——Matt Spec 表達不出、但設計上必須成立的事 |
+| 驗收基準 | 不重寫。本文件只補「全域實作約束」——Matt Spec 表達不出、但設計上必須成立的事 |
 
 引用一律帶一句摘要，不留裸連結——判準見 `writing-rules.md` 的「刪掉編號測試」。
 

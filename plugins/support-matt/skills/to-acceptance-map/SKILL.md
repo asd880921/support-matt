@@ -1,6 +1,6 @@
 ---
 name: to-acceptance-map
-description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 盤點自動化測試對驗收項目的覆蓋情形，產出 acceptance-map.md。驗收來源有兩處：各 ticket 的驗收條件，以及 engineering-spec.md 的設計檢核點（含從未進入任何 ticket 的項目）。本 skill 執行前會先詢問測試執行範圍（全部／受影響／不跑），並逐一執行各測試專案而非整個 solution 一次跑，再逐項判定已涵蓋／覆蓋不足／需補測試／不適用測試並標註對應測試。對 ticket、設計文件、功能程式碼與測試程式一律唯讀，只建立或覆寫 acceptance-map.md；不補寫測試、不修程式。當使用者在 branch 開發完畢、要做最終覆蓋盤點並取得可追溯的驗收項目對測試清單時使用。
+description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 盤點自動化測試對驗收項目的覆蓋情形，產出 acceptance-map.md。驗收來源有兩處：各 ticket 的驗收條件，以及 engineering-spec.md 的全域實作約束（含從未進入任何 ticket 的項目）。本 skill 執行前會先詢問測試執行範圍（全部／受影響／不跑），並逐一執行各測試專案而非整個 solution 一次跑，再逐項判定已涵蓋／覆蓋不足／需補測試／不適用測試並標註對應測試。對 ticket、設計文件、功能程式碼與測試程式一律唯讀，只建立或覆寫 acceptance-map.md；不補寫測試、不修程式。當使用者在 branch 開發完畢、要做最終覆蓋盤點並取得可追溯的驗收項目對測試清單時使用。
 ---
 
 # to-acceptance-map
@@ -39,9 +39,9 @@ description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 
 兩個來源都要納入：
 
 - **各 ticket 的驗收條件** —— ticket 檔案中的 checkbox 項目。以 `<ticket 編號>-<項次>` 作為識別（例如 `01-08`）。
-- **`engineering-spec.md` 的設計檢核點** —— DC 表格全部列，沿用其 `DC-xx` 編號。
+- **`engineering-spec.md` 的全域實作約束** —— DC 表格全部列，沿用其 `DC-xx` 編號。
 
-**設計檢核點必須全部納入，包含從未被任何 ticket 吸收的項目。** 這正是本 skill 存在的理由之一：以否定式陳述表達的檢核點（「未使用 X」「未產生 Y」）在拆票時容易蒸發，因為它們演示不出來；feature 層級的盤點是它們唯一的回收點。
+**全域實作約束必須全部納入，包含從未被任何 ticket 吸收的項目。** 這正是本 skill 存在的理由之一：以否定式陳述表達的約束（「未使用 X」「未產生 Y」）在拆票時容易蒸發，因為它們演示不出來；feature 層級的盤點是它們唯一的回收點。
 
 同理，**橫跨多張 ticket 的項目**（例如「查詢與匯出走同一個取資料的方法」）在任何單張 ticket 的收尾都驗不到，只有這裡驗得到。
 
@@ -130,7 +130,7 @@ description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 
 
 - 分支：<branch-name>
 - 盤點時間：<YYYY-MM-DD>
-- 來源：issues/01..NN、engineering-spec.md 設計檢核點
+- 來源：issues/01..NN、engineering-spec.md 全域實作約束
 
 ## 摘要
 
@@ -150,12 +150,12 @@ description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 
 | 01-08 | <驗收條件原文> | 已涵蓋 | `TestXxx.某測試方法` | |
 | 01-09 | <驗收條件原文> | 覆蓋不足 | `TestXxx.某測試方法` | 只驗了快樂路徑，邊界值未測 |
 
-## 設計檢核點（來自 engineering-spec.md）
+## 全域實作約束（來自 engineering-spec.md）
 
-| 編號 | 檢核點 | 判定 | 對應測試 | 備註 |
+| 編號 | 約束 | 判定 | 對應測試 | 備註 |
 | --- | --- | --- | --- | --- |
-| DC-02 | <檢核點原文> | 不適用測試 | — | 結構性約束：測試看不到查詢走 DB 還是記憶體，需靜態檢查 |
-| DC-05 | <檢核點原文> | 需補測試 | — | 未被任何 ticket 吸收，但候選清單條件是可觀察行為 |
+| DC-02 | <約束原文> | 不適用測試 | — | 結構性約束：測試看不到查詢走 DB 還是記憶體，需靜態檢查 |
+| DC-05 | <約束原文> | 需補測試 | — | 未被任何 ticket 吸收，但候選清單條件是可觀察行為 |
 
 ## 與 checklist 記錄的落差
 
@@ -193,4 +193,4 @@ description: 整條 branch 的 ticket 全部開發完畢後，於獨立 session 
 ## 下一步引導（純提示，不主動調用）
 
 - **有需補測試或覆蓋不足** → 提示使用者可回到 `implement-stepwise`，將補測試視為新的 commit item 處理。
-- **全部收斂** → 提示使用者可執行 `to-engineering-spec` 的定稿模式，依本檔案逐條標註設計檢核點的驗證結果；需交付時再以 `engineering-spec-deliverable` 產出交付版。
+- **全部收斂** → 提示使用者可執行 `to-engineering-spec` 的定稿模式，依本檔案逐條標註全域實作約束的驗證結果；需交付時再以 `engineering-spec-deliverable` 產出交付版。
