@@ -1,6 +1,6 @@
 # support-matt
 
-套件版本：`v0.5.1`
+套件版本：`v0.5.2`
 更新時間：2026-08-05
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json，發版時一併更新此處版本與日期 -->
@@ -25,7 +25,7 @@
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
 | `implement-stepwise` | 取代 `implement`（**重票**）：把 ticket 拆成 commit checklist 寫回 ticket，之後一次做一個 commit，經確認後自動 commit 再停。每個 commit 之間清 context。 |
 | `implement-oneshot` | 取代 `implement`（**輕票**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾**詢問**是否跑 `code-review`（附瘦身參數）。 |
-| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。四級判定區分「應補測試」與「非測試可驗」，回報只呈現例外。全程唯讀。 |
+| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
 
 掛載位置：
 
