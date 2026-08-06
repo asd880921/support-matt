@@ -12,8 +12,8 @@ grill-with-docs → to-spec → to-engineering-spec → 人工確認 → to-tick
 | --- | --- | --- | --- |
 | `CONTEXT.md` | `domain-modeling` | 專案術語 | 需求、設計 |
 | `docs/adr/NNNN-*.md` | `domain-modeling` / `grill-with-docs` | 少量、重要、難以回復且有真實取捨的決策**理由** | 完整設計；ADR 不該長成規格 |
-| `.scratch/<slug>/spec.md` | `to-spec` | **需求、範圍、行為、user stories、驗收基準、測試決策** | 系統分析、資料表結構、交易邊界 |
-| `.scratch/<slug>/engineering-spec.md` | **本 skill** | **系統分析、設計決策、實作約束** | 需求與驗收基準 |
+| `.scratch/<slug>/spec.md` | `to-spec` | **需求、範圍、行為、user stories、測試決策** | 系統分析、資料表結構、交易邊界、可判斷真偽的驗證條件 |
+| `.scratch/<slug>/engineering-spec.md` | **本 skill** | **系統分析、設計決策、實作約束、驗證條件** | 需求要不要做、做到什麼程度 |
 | `.scratch/<slug>/issues/NN-*.md` | `to-tickets` | 工作切片與其順序 | 需求、架構 |
 | 程式碼與測試 | `implement` | 實際落地證據 | 不自動凌駕已確認規格 |
 | 公司 GitLab Issue | 人 | 正式的人類紀錄 | 不作為 Agent 的細碎工作佇列 |
@@ -40,7 +40,7 @@ Matt Spec 已經寫了 user stories、Out of Scope、Testing Decisions。本文�
 | 使用情境清單 | 不重寫 user stories。需要指涉某條時寫 `見 spec.md User Story 12：審核者可退回申請單` |
 | 不做什麼 | 「二、範圍與非範圍」只寫**系統邊界**（哪個模組不動、哪張表不碰）；產品層級的 Out of Scope 引用 Matt Spec |
 | 測試在哪個 seam | Matt Spec 的 Testing Decisions 已定案時引用它；未定案時本文件以「實作方向」提出 |
-| 驗收基準 | 不重寫。本文件只補「全域實作約束」——Matt Spec 表達不出、但設計上必須成立的事 |
+| 驗收基準 | **本文件的「驗證條件」章是權威**，但只寫「怎麼驗證 Matt Spec 那條需求成立」，每條指回 user story、BR 或設計章節。不重寫 user stories、不擴充也不縮減範圍 |
 
 引用一律帶一句摘要，不留裸連結——判準見 `writing-rules.md` 的「刪掉編號測試」。
 
@@ -119,8 +119,8 @@ $to-tickets 依 .scratch/<feature-slug>/spec.md 與 .scratch/<feature-slug>/engi
 
 需要正式系統分析與設計的功能，除了 `spec.md` 之外還有一份 `engineering-spec.md`，與 spec 同目錄。
 
-- **`spec.md`**：需求、範圍、行為、驗收基準的權威。
-- **`engineering-spec.md`**：系統分析、設計決策與實作約束的權威。
+- **`spec.md`**：需求、範圍、行為的權威——要不要做、做到什麼程度。
+- **`engineering-spec.md`**：系統分析、設計決策、實作約束與**驗證條件**的權威——怎麼驗證它成立。
 
 ## 給 to-tickets / implement / code-review 的規則
 
