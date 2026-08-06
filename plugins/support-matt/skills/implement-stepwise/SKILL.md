@@ -63,7 +63,7 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 2. **強制探索 codebase 現況**，包含 `Blocked by` 所列 ticket 已經留下的程式碼。這一步不得跳過——commit 拆分必須建立在真實的程式碼狀態上，不是憑 ticket 文字想像。探索方式依 `token-discipline.md`。
 3. 拆分 commit，並為每一項宣告它要測試的 **seam**（公開介面邊界）。
 4. 將完整清單列給使用者，詢問：粒度是否合適？seam 是否正確？有無需要合併或再拆的項目？
-5. 使用者確認後，把 `## Commit checklist` 章節 **append 到 ticket 檔案末尾**。不得改動 `What to build`、`Acceptance criteria`、`Blocked by`、`Status` 等 Matt 既有欄位。
+5. 使用者確認後，把 `## Commit checklist` 章節 **append 到 ticket 檔案末尾**。不得改動 `What to build`、`Acceptance criteria`、`Blocked by`、`Status` 等 Matt 既有欄位的**文字內容**（收尾階段可更新驗收條件的 checkbox 狀態，見 `implementation-rules.md` 的「寫回 ticket」；那只改勾選，不改條文）。
 6. **停止。** 不在同一輪開始實作。
 
 **規劃階段的探索要淺。** 目的是畫出 commit 的邊界，不是預先理解每個 commit 的實作細節——那些細節在清 context 後會作廢，等該 commit 真正開工時再讀才不會白費。把規劃學到的東西壓縮進 seam 宣告與變更檔案清單，那是它們的保存形式。
@@ -124,7 +124,7 @@ agentic loop 的成本是「每回合的 context 大小」對回合數的累加�
 
 ## 收尾（checklist 全部完成時）
 
-依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**。
 
 本 skill 特有的兩點：
 

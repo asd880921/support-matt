@@ -77,7 +77,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 3. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
 4. 確認後直接往下實作，**不再逐 commit 徵詢**。
 
-這份切分**不寫回 ticket 檔案**。本 skill 一路做完，不需要跨 session 的進度狀態；ticket 的 `## Commit checklist` 章節是 `implement-stepwise` 的機制，兩者不混用。
+**commit 切分**不寫回 ticket 檔案。本 skill 一路做完，不需要跨 session 的進度狀態；ticket 的 `## Commit checklist` 章節是 `implement-stepwise` 的機制，兩者不混用。（收尾階段的驗收核對結果仍要寫回 ticket，見第 4 節。）
 
 ## 3. 實作
 
@@ -86,13 +86,15 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 - 每個 commit 走完整的紅綠循環，測試與實作同屬一個 commit。
 - 每個 commit 完成後**直接 `git commit`**，不徵詢——這是本 skill 與 `implement-stepwise` 的核心差異。
 - **定期執行 typecheck，並跑與當下變更相關的單一測試檔**；不要累積到最後才一次驗證。
-- 每個 commit 完成時，依「邊做邊記」記下本次測試與涵蓋的驗收條件。因為不寫回 ticket，**改為在最終回報中一併列出**。
+- 每個 commit 完成時，依「邊做邊記」記下本次測試與涵蓋的驗收條件，收尾時併入寫回 ticket 的核對表與最終回報。
 
 ## 4. 收尾
 
-依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
 
-回報時一併列出全部 commit 清單，以及每個 commit 的測試與涵蓋的驗收條件（邊做邊記的內容）——本 skill 不寫回 ticket，這份回報是它唯一的留存處。
+**寫回 ticket 對本 skill 特別重要。** 它不像 `implement-stepwise` 會在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
+
+回報時一併列出全部 commit 清單。
 
 接著進入下一節的 code-review 詢問。
 
