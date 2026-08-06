@@ -5,7 +5,7 @@ description: 在 Matt 的 to-spec 與 to-tickets 之間，建立並維護一份�
 
 # to-engineering-spec
 
-從 Matt 最新版 Spec、程式碼現況、`CONTEXT.md` 與 ADR 出發，建立或維護**一份** `engineering-spec.md`——公司正式的開發規格文件。繁體中文，同時涵蓋系統分析與系統設計，但不切成「SA」「SD」兩大章。
+從 Matt 最新版 Spec、程式碼現況、`.ai/CONTEXT.md` 與 ADR 出發，建立或維護**一份** `engineering-spec.md`——公司正式的開發規格文件。繁體中文，同時涵蓋系統分析與系統設計，但不切成「SA」「SD」兩大章。
 
 三種讀者：**審查的人**（可直接人工審查，交付版貼回公司 GitLab Issue）、**實作的工程師**（細節完整到不必回頭問人）、**下游 Matt Agent**（`to-tickets` 依它切 slices，`implement` 依它落地，`code-review` 依它判斷偏離）。
 
@@ -94,7 +94,7 @@ Matt 的 Spec 模板允許放 API contracts 與 technical clarifications，裡�
 
 | 模式 | 何時 | 產出 |
 | --- | --- | --- |
-| **建立** | `.scratch/<feature-slug>/engineering-spec.md` 不存在 | 新建文件，分析段 → 確認關卡 → 設計段 → `可拆 Ticket` |
+| **建立** | `.ai/.scratch/<feature-slug>/engineering-spec.md` 不存在 | 新建文件，分析段 → 確認關卡 → 設計段 → `可拆 Ticket` |
 | **修訂** | 文件已存在，且開發尚未結束 | 就地修訂同一份文件，列出受影響的 Matt Spec、ADR 與 Tickets |
 | **定稿** | 開發與 code review 已完成 | 核對預期／設計／實作三者，就地定稿為實際交付結果 |
 
@@ -118,12 +118,12 @@ Matt 的 Spec 模板允許放 API contracts 與 technical clarifications，裡�
 
 | 事實類型 | 權威 |
 | --- | --- |
-| 需求、範圍、行為、user stories——**要不要做、做到什麼程度** | **Matt Spec**（`.scratch/<feature-slug>/spec.md`） |
+| 需求、範圍、行為、user stories——**要不要做、做到什麼程度** | **Matt Spec**（`.ai/.scratch/<feature-slug>/spec.md`） |
 | 系統分析、設計決策、實作約束 | **本文件**（`engineering-spec.md`） |
 | 驗證條件——**怎麼驗證需求成立** | **本文件**的「驗證條件」章，每條指回 user story、BR 或本文件的設計章節 |
-| 少量、重要、難以回復且有真實取捨的決策理由 | **ADR**（`docs/adr/`） |
-| 專案術語 | **`CONTEXT.md`** |
-| 工作切片 | **Tickets**（`.scratch/<feature-slug>/issues/`）——不是需求或架構的權威 |
+| 少量、重要、難以回復且有真實取捨的決策理由 | **ADR**（`.ai/docs/adr/`） |
+| 專案術語 | **`.ai/CONTEXT.md`** |
+| 工作切片 | **Tickets**（`.ai/.scratch/<feature-slug>/issues/`）——不是需求或架構的權威 |
 | 實際落地證據 | **程式碼與測試**——不自動凌駕已確認規格 |
 | 正式的人類紀錄 | **公司 GitLab Issue**——可貼入最終規格，不作為 Agent 的工作佇列 |
 
@@ -131,9 +131,9 @@ Matt 的 Spec 模板允許放 API contracts 與 technical clarifications，裡�
 
 ## Input
 
-至少需要下列其一：Matt Spec 的路徑（通常 `.scratch/<feature-slug>/spec.md`）或內容、當前對話（剛跑完 `grill-with-docs` / `to-spec` 的脈絡）、待修訂或待定稿的現有 `engineering-spec.md`。
+至少需要下列其一：Matt Spec 的路徑（通常 `.ai/.scratch/<feature-slug>/spec.md`）或內容、當前對話（剛跑完 `grill-with-docs` / `to-spec` 的脈絡）、待修訂或待定稿的現有 `engineering-spec.md`。
 
-會主動讀取（存在時）：現有程式碼、`CONTEXT.md` / `CONTEXT-MAP.md`、`docs/adr/`、`.scratch/<feature-slug>/issues/`。
+會主動讀取（存在時）：現有程式碼、`.ai/CONTEXT.md` / `.ai/CONTEXT-MAP.md`、`.ai/docs/adr/`、`.ai/.scratch/<feature-slug>/issues/`。
 
 選填：公司 PRD 或 GitLab Issue 內容（可直接貼上，或提供 `project_id` 與 `issue_number` 透過 `gitlab-issue-fetch` 取得，**只讀不寫**）、輸出路徑、語言覆蓋設定。
 
@@ -144,14 +144,14 @@ Matt 的 Spec 模板允許放 API contracts 與 technical clarifications，裡�
 Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集中在一個目錄：
 
 ```text
-.scratch/<feature-slug>/
+.ai/.scratch/<feature-slug>/
 ├── spec.md              # Matt to-spec 產出（需求權威）
 ├── engineering-spec.md  # 本 skill 產出（系統分析與設計權威）
 └── issues/              # Matt to-tickets 產出
     └── NN-<slug>.md
 ```
 
-`<feature-slug>` **沿用 Matt Spec 已經建立的那個目錄名，不自己另取**。開工前先確認 `docs/agents/issue-tracker.md` 的設定；非 Local markdown 時本地沒有 `.scratch/<feature-slug>/` 可用，改與使用者確認落點（建議 `docs/specs/<feature-slug>/engineering-spec.md`），並在文件資訊記錄 Matt Spec 的 Issue 連結取代相對路徑。
+`<feature-slug>` **沿用 Matt Spec 已經建立的那個目錄名，不自己另取**。開工前先確認 `.ai/docs/agents/issue-tracker.md` 的設定；非 Local markdown 時本地沒有 `.ai/.scratch/<feature-slug>/` 可用，改與使用者確認落點（建議 `docs/specs/<feature-slug>/engineering-spec.md`），並在文件資訊記錄 Matt Spec 的 Issue 連結取代相對路徑。
 
 **本 skill 預設不修改任何遠端 Issue。** 不呼叫 `gitlab-issue-write`、不呼叫 `gh issue`、不建立、不留言、不關閉。
 
@@ -171,7 +171,7 @@ Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集�
 
 **建立模式**
 
-1. 讀 Matt Spec 全文、當前對話、`CONTEXT.md`、相關 ADR；確認 `feature-slug` 與 issue tracker 設定。
+1. 讀 Matt Spec 全文、當前對話、`.ai/CONTEXT.md`、相關 ADR；確認 `feature-slug` 與 issue tracker 設定。
 2. 依「適用門檻」判斷是否值得產出；三者以上皆否時停下來告知使用者。
 3. 既有專案：依 `references/codebase-discovery.md` 查找現況，查找與撰寫同時進行。
 4. 讀 `writing-rules.md`、`constraint-levels.md`、`document-template.md`。
@@ -182,7 +182,7 @@ Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集�
 
 **修訂模式**
 
-1. 讀現有 `engineering-spec.md` 全文、Matt Spec、相關 ADR、`.scratch/<feature-slug>/issues/` 現況。
+1. 讀現有 `engineering-spec.md` 全文、Matt Spec、相關 ADR、`.ai/.scratch/<feature-slug>/issues/` 現況。
 2. 找出該事實的**唯一權威位置**，就地修改那一處。若覺得別處也要跟著改，代表那裡違規重述了——把它改成引用。
 3. 行為有變時**同步改掉對應的 `VC-xx`**，不新增第二條並存。
 4. 在「修訂影響」回報受影響的 Matt Spec 段落、ADR、已發布 Tickets。**不直接修改已發布 Ticket**，除非使用者明確要求。
@@ -240,12 +240,12 @@ Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集�
 回報時給使用者可直接貼上的一行：
 
 ```text
-$to-tickets 依 .scratch/<feature-slug>/spec.md 與 .scratch/<feature-slug>/engineering-spec.md 拆票，並參照 docs/adr/ 與 CONTEXT.md
+$to-tickets 依 .ai/.scratch/<feature-slug>/spec.md 與 .ai/.scratch/<feature-slug>/engineering-spec.md 拆票，並參照 docs/adr/ 與 CONTEXT.md
 ```
 
 文件最後一章寫入固定的 handoff 段落，內容照抄 `references/document-template.md` 的十四章，不要每次重寫措辭——下游 Agent 靠這段的穩定性辨認約束程度。`$to-tickets ...` 那一行**只出現在回報訊息，不寫進文件**。
 
-若 `to-tickets` 或 `implement` 在此專案中沒有穩定讀到本文件，採最小侵入的整合方式（repo-level `AGENTS.md` / `CLAUDE.md` 的 `## Agent skills` 區塊、`docs/agents/` companion reference、Matt Spec 頂部的一行指標），**不修改 Matt 的上游 Skill**。做法見 `references/matt-workflow-integration.md`。
+若 `to-tickets` 或 `implement` 在此專案中沒有穩定讀到本文件，採最小侵入的整合方式（repo-level `AGENTS.md` / `CLAUDE.md` 的 `## Agent skills` 區塊、`.ai/docs/agents/` companion reference、Matt Spec 頂部的一行指標），**不修改 Matt 的上游 Skill**。做法見 `references/matt-workflow-integration.md`。
 
 ## Output Quality Bar
 

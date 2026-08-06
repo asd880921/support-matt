@@ -10,11 +10,11 @@ grill-with-docs → to-spec → to-engineering-spec → 人工確認 → to-tick
 
 | 產物 | 誰產 | 是什麼的權威 | **不是**什麼的權威 |
 | --- | --- | --- | --- |
-| `CONTEXT.md` | `domain-modeling` | 專案術語 | 需求、設計 |
-| `docs/adr/NNNN-*.md` | `domain-modeling` / `grill-with-docs` | 少量、重要、難以回復且有真實取捨的決策**理由** | 完整設計；ADR 不該長成規格 |
-| `.scratch/<slug>/spec.md` | `to-spec` 建立，`to-change-request` 修訂 | **需求、範圍、行為、user stories、測試決策** | 系統分析、資料表結構、交易邊界、可判斷真偽的驗證條件 |
-| `.scratch/<slug>/engineering-spec.md` | **本 skill** | **系統分析、設計決策、實作約束、驗證條件** | 需求要不要做、做到什麼程度 |
-| `.scratch/<slug>/issues/NN-*.md` | `to-tickets` | 工作切片與其順序 | 需求、架構 |
+| `.ai/CONTEXT.md` | `domain-modeling` | 專案術語 | 需求、設計 |
+| `.ai/docs/adr/NNNN-*.md` | `domain-modeling` / `grill-with-docs` | 少量、重要、難以回復且有真實取捨的決策**理由** | 完整設計；ADR 不該長成規格 |
+| `.ai/.scratch/<slug>/spec.md` | `to-spec` 建立，`to-change-request` 修訂 | **需求、範圍、行為、user stories、測試決策** | 系統分析、資料表結構、交易邊界、可判斷真偽的驗證條件 |
+| `.ai/.scratch/<slug>/engineering-spec.md` | **本 skill** | **系統分析、設計決策、實作約束、驗證條件** | 需求要不要做、做到什麼程度 |
+| `.ai/.scratch/<slug>/issues/NN-*.md` | `to-tickets` | 工作切片與其順序 | 需求、架構 |
 | 程式碼與測試 | `implement` | 實際落地證據 | 不自動凌駕已確認規格 |
 | 公司 GitLab Issue | 人 | 正式的人類紀錄 | 不作為 Agent 的細碎工作佇列 |
 
@@ -25,7 +25,7 @@ grill-with-docs → to-spec → to-engineering-spec → 人工確認 → to-tick
 1. **需求類事實**（要做什麼、誰用、什麼算完成）→ Matt Spec 勝。本文件跟著改。
 2. **設計類事實**（怎麼做、資料長怎樣、邊界在哪）→ 本文件勝。Matt Spec 不該寫這些；若它寫了且與本文件衝突，停下來請使用者決定要不要把那段從 Matt Spec 移除。
 3. **決策理由** → ADR 勝。本文件引用 ADR 編號，不複製理由全文。
-4. **術語** → `CONTEXT.md` 勝。兩份文件都必須用它的字。
+4. **術語** → `.ai/CONTEXT.md` 勝。兩份文件都必須用它的字。
 5. **程式碼** → **不自動勝**。程式碼與規格不一致是一個要被決策的事實，不是一個自動生效的更新。
 
 **任何順位衝突都不由 skill 自行裁決**，一律停下來指出衝突並要求處理（見 SKILL.md 的「衝突處理」）。
@@ -46,29 +46,31 @@ Matt Spec 已經寫了 user stories、Out of Scope、Testing Decisions。本文�
 
 ## 檔案位置
 
-先讀 `docs/agents/issue-tracker.md` 確認 tracker 設定（由 `/setup-matt-pocock-skills` 產生）。
+先讀 `.ai/docs/agents/issue-tracker.md` 確認 tracker 設定（由 `setup-matt-preset` 產生）。
 
-**Local markdown（本專案的預設情境）**——Matt 的規則是一功能一目錄，spec 為 `.scratch/<feature-slug>/spec.md`，ticket 為 `.scratch/<feature-slug>/issues/<NN>-<slug>.md`。本文件併入同一個目錄：
+本 skill 的 feature 目錄一律寫 `.ai/.scratch/`：`setup-matt-preset` 把 Matt 規範中落在 repo 根目錄的產物整批下移一層，只換層級，命名與存放方式照 Matt 原樣。**實際位置以該 repo 的 `issue-tracker.md` 為準**——未跑過 `setup-matt-preset` 的 repo 仍是根層的 `.scratch/`，此時去掉 `.ai/` 前綴讀寫。
+
+**Local markdown（本專案的預設情境）**——一功能一目錄，spec 為 `.ai/.scratch/<feature-slug>/spec.md`，ticket 為 `.ai/.scratch/<feature-slug>/issues/<NN>-<slug>.md`。本文件併入同一個目錄：
 
 ```text
-.scratch/<feature-slug>/
+.ai/.scratch/<feature-slug>/
 ├── spec.md
 ├── engineering-spec.md
 └── issues/
     └── 01-<slug>.md
 ```
 
-好處是三者相對連結穩定（`./spec.md`、`./issues/01-foo.md`），`code-review` 找 spec 時掃 `.scratch/` 會一起看到。
+好處是三者相對連結穩定（`./spec.md`、`./issues/01-foo.md`），`code-review` 找 spec 時掃 `.ai/.scratch/` 會一起看到。
 
 `<feature-slug>` **沿用 Matt Spec 建好的目錄名**，不自己另取。目錄不存在時（使用者先跑本 skill）才自行建立，並用同一套 kebab-case slug。
 
-**其他 tracker（GitHub / GitLab / Linear）**——本地沒有 `.scratch/<feature-slug>/`。與使用者確認落點，建議 `docs/specs/<feature-slug>/engineering-spec.md`，並在「文件資訊」用 Issue 連結取代 `spec.md` 的相對路徑。
+**其他 tracker（GitHub / GitLab / Linear）**——本地沒有 `.ai/.scratch/<feature-slug>/`。與使用者確認落點，建議 `docs/specs/<feature-slug>/engineering-spec.md`，並在「文件資訊」用 Issue 連結取代 `spec.md` 的相對路徑。
 
 ## 公司 GitLab 的界線
 
 - 本 skill **不建立、不修改、不留言、不關閉**任何遠端 Issue。不呼叫 `gitlab-issue-write`，不呼叫 `gh issue`，不呼叫 `glab`。
 - 公司 GitLab Issue 可以作為**輸入**（PRD 來源），透過 `gitlab-issue-fetch` 或使用者直接貼上。
-- Matt 的 Spec 與 Tickets 留在 `.scratch/`，不上 GitLab——這正是 tracker 設成 Local markdown 的目的：避免公司 GitLab 被大量 Agent 工作 Issue 汙染。
+- Matt 的 Spec 與 Tickets 留在 `.ai/.scratch/`，不上 GitLab——這正是 tracker 設成 Local markdown 的目的：避免公司 GitLab 被大量 Agent 工作 Issue 汙染。
 - `engineering-spec.md` 由**使用者自己**決定何時貼回公司 GitLab Issue。
 - **本文件是工作版，不是交付版。** 它帶著 `./spec.md` 的相對連結、ADR 編號引用與給 `to-tickets` 的 handoff——這三樣在管線裡都是必要的，貼上 Issue 後卻全部失效：Issue 上沒有 `./spec.md`，相對連結是死的，handoff 是內部工作註記。
 - 要貼上 Issue 時，由 **`engineering-spec-deliverable`** 產出交付版 `engineering-spec_deliverable.md`（引用改內嵌、handoff 改寫成給人看的解讀規則），原檔不動。本 skill 不做這件事。
@@ -82,7 +84,7 @@ Matt 的 `to-tickets` 只在使用者傳入 reference 時才會 fetch，`impleme
 
 ### 1. Matt Spec 頂部的一行指標（必做）
 
-在 `.scratch/<feature-slug>/spec.md` 最上方（標題之後）加一行：
+在 `.ai/.scratch/<feature-slug>/spec.md` 最上方（標題之後）加一行：
 
 ```markdown
 > Engineering spec: [engineering-spec.md](./engineering-spec.md) — 系統分析、設計決策與實作約束的權威。拆票與實作前請一併閱讀。
@@ -97,24 +99,24 @@ Matt 的 `to-tickets` 只在使用者傳入 reference 時才會 fetch，`impleme
 回報訊息給出可直接貼上的一行：
 
 ```text
-$to-tickets 依 .scratch/<feature-slug>/spec.md 與 .scratch/<feature-slug>/engineering-spec.md 拆票，並參照 docs/adr/ 與 CONTEXT.md
+$to-tickets 依 .ai/.scratch/<feature-slug>/spec.md 與 .ai/.scratch/<feature-slug>/engineering-spec.md 拆票，並參照 docs/adr/ 與 CONTEXT.md
 ```
 
 `to-tickets` 的 step 1 明說會 fetch 使用者傳入的 reference，這是最直接有效的一道。
 
 ### 3. repo-level 的 `## Agent skills` 補充（建議做一次）
 
-`/setup-matt-pocock-skills` 會在 `CLAUDE.md` 或 `AGENTS.md` 寫一個 `## Agent skills` 區塊，並把細節放在 `docs/agents/*.md`。沿用**同一個擴充點**，不另起爐灶：
+`setup-matt-preset` 會把 Matt 原本要寫進 `CLAUDE.md` / `AGENTS.md` 的 `## Agent skills` 區塊內容存成 `.ai/docs/agents/workflow.md`，再於根目錄的 `CLAUDE.md`（與 `AGENTS.md`，若存在）以 `@.ai/docs/agents/workflow.md` 匯入，細節同樣放在 `.ai/docs/agents/*.md`。沿用**同一個擴充點**，不另起爐灶：
 
-在既有的 `## Agent skills` 區塊底下補一個子區塊（存在則就地更新，不重複 append）：
+在 `.ai/docs/agents/workflow.md` 的 `## Agent skills` 區塊底下補一個子區塊（存在則就地更新，不重複 append）。未跑過 `setup-matt-preset` 的 repo，該區塊仍直接寫在 `CLAUDE.md` / `AGENTS.md` 裡，就改那裡：
 
 ```markdown
 ### Engineering spec
 
-需要正式 SA / SD 的功能，在 `to-spec` 之後、`to-tickets` 之前產出 `.scratch/<feature>/engineering-spec.md`。拆票、實作與 review 前一併閱讀。見 `docs/agents/engineering-spec.md`。
+需要正式 SA / SD 的功能，在 `to-spec` 之後、`to-tickets` 之前產出 `.ai/.scratch/<feature>/engineering-spec.md`。拆票、實作與 review 前一併閱讀。見 `.ai/docs/agents/engineering-spec.md`。
 ```
 
-並寫 `docs/agents/engineering-spec.md`：
+並寫 `.ai/docs/agents/engineering-spec.md`：
 
 ```markdown
 # Engineering spec
@@ -134,7 +136,7 @@ $to-tickets 依 .scratch/<feature-slug>/spec.md 與 .scratch/<feature-slug>/engi
 - 兩份文件衝突時停下來問人，不要自己選一邊。
 ```
 
-**這一步要先問使用者再寫**——它動的是 repo 根目錄的檔案。使用者拒絕時，前兩道保險已經夠用，照常繼續。
+**這一步要先問使用者再寫**——它動的是整個 repo 共用的 Agent 設定檔。使用者拒絕時，前兩道保險已經夠用，照常繼續。
 
 ## 給 code-review 的銜接
 

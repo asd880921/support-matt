@@ -131,7 +131,7 @@ grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-ti
 
 ## 工作流程
 
-1. 確認來源檔路徑（通常 `.scratch/<feature-slug>/engineering-spec.md`）。使用者直接貼上內容時，跳過檔案處理，最後回傳轉換後的 Markdown。
+1. 確認來源檔路徑（通常 `.ai/.scratch/<feature-slug>/engineering-spec.md`）。使用者直接貼上內容時，跳過檔案處理，最後回傳轉換後的 Markdown。
 2. **完整讀過來源文件**，不只掃描標題。三項轉換都需要理解內容才做得對，尤其是引用摘要的擴寫。
 3. 需要攤回理由時，讀「文件資訊」列出的每一則 ADR。**ADR 讀不到（檔案不存在、路徑錯）時停下來問使用者**，不要編一個理由。
 4. 把來源完整複製成 `<原檔名>_deliverable.md`，後續所有轉換只在這份副本上進行。

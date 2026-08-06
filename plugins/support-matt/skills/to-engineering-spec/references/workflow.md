@@ -10,7 +10,7 @@
 
 | 觀察到的狀態 | 模式 |
 | --- | --- |
-| `.scratch/<feature-slug>/engineering-spec.md` 不存在 | 建立（分析段） |
+| `.ai/.scratch/<feature-slug>/engineering-spec.md` 不存在 | 建立（分析段） |
 | 文件存在，`文件狀態` = `分析中`，使用者帶著確認或修正回來 | 建立（設計段） |
 | 文件存在且已到 `可拆 Ticket` 以上，開發尚未結束 | 修訂 |
 | 開發與 code review 已完成，使用者要求核對／收尾／交件 | 定稿 |
@@ -38,9 +38,9 @@
 
 ### 分析段流程
 
-1. 讀 Matt Spec 全文（通常 `.scratch/<feature-slug>/spec.md`）、當前對話、`CONTEXT.md`、`docs/adr/` 中相關的 ADR。確認 `feature-slug` 與 `docs/agents/issue-tracker.md` 的 tracker 設定。
+1. 讀 Matt Spec 全文（通常 `.ai/.scratch/<feature-slug>/spec.md`）、當前對話、`.ai/CONTEXT.md`、`.ai/docs/adr/` 中相關的 ADR。確認 `feature-slug` 與 `.ai/docs/agents/issue-tracker.md` 的 tracker 設定。
 2. 依 SKILL.md 的「適用門檻」判斷值不值得產出。三者以上皆否時停下來告知使用者可走 Matt 原生流程。
-3. 判斷既有專案 / 全新專案。既有專案讀 `codebase-discovery.md` 查找現況——**分析段也要查找**，因為現有的角色、狀態、規則與術語會直接改變分析的寫法。術語一律對齊 `CONTEXT.md`。
+3. 判斷既有專案 / 全新專案。既有專案讀 `codebase-discovery.md` 查找現況——**分析段也要查找**，因為現有的角色、狀態、規則與術語會直接改變分析的寫法。術語一律對齊 `.ai/CONTEXT.md`。
 4. 讀 `writing-rules.md`、`constraint-levels.md`、`document-template.md`，寫出分析段章節。
 5. 過程中出現疑問，依 `clarification-and-open-questions.md` 立即停下來問；被暫緩的問題全數進「待釐清事項」。已在 grilling 或 Matt Spec 確認的事不重問。
 6. **跑一次「送出前自檢」**（見下方共用的「送出前自檢」章節），發現的問題就地修掉。
@@ -103,7 +103,7 @@
 
 ### 流程
 
-1. 讀現有 `engineering-spec.md` 全文、最新 Matt Spec、相關 ADR，以及 `.scratch/<feature-slug>/issues/` 的現況（哪些 Ticket 已發布、哪些已完成）。
+1. 讀現有 `engineering-spec.md` 全文、最新 Matt Spec、相關 ADR，以及 `.ai/.scratch/<feature-slug>/issues/` 的現況（哪些 Ticket 已發布、哪些已完成）。
 2. **判斷這件事該不該進正式規格**：
 
    | 情況 | 處理 |
@@ -136,7 +136,7 @@
 
 ### 輸入
 
-最新 Matt Spec、現有 `engineering-spec.md`、相關 ADR、最終 git diff、最終程式碼、測試與驗收結果、`.scratch/<feature-slug>/issues/` 的完成狀態。
+最新 Matt Spec、現有 `engineering-spec.md`、相關 ADR、最終 git diff、最終程式碼、測試與驗收結果、`.ai/.scratch/<feature-slug>/issues/` 的完成狀態。
 
 ### 流程
 
