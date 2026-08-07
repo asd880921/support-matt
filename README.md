@@ -27,6 +27,7 @@
 | `implement-oneshot` | 取代 `implement`（**輕票**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾**詢問**是否跑 `code-review`（附瘦身參數）。 |
 | `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
 | `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、`engineering-spec.md` 修訂與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
+| `to-code-review` | Matt `code-review` 的**上層入口**：自家 branch 只需給目標分支，規格由 feature 目錄自動取得、`REVIEW.md` 寫回該目錄；代審他人 MR 則另外要背景說明，寫到 `.ai/code-review/`。兩軸結果一律過證據門檻後才輸出 P0–P3 findings。 |
 
 掛載位置：
 
@@ -38,9 +39,12 @@ grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-ti
                                                                           ↓
                                           重票 → [implement-stepwise]  ／  輕票 → [implement-oneshot]
                                                                           ↓
+                                                              [to-code-review]（合併前最後一關）
+                                                                          ↓
                           [to-engineering-spec 定稿] ← [to-acceptance-map]（branch 完成後，新 session）
 
 開發中途要改：grill-me / grill-with-docs → [to-change-request] → implement
+代審他人 MR：[to-code-review]（模式 B），與上面的 pipeline 無關
 ```
 
 兩個 implement 取代 Matt 的 `implement`，內部都調用其 `tdd`，都不會自動執行 `code-review`。選哪一個依 ticket 規模——`implement-oneshot` 開場會自己評估，過重時建議你換手。
