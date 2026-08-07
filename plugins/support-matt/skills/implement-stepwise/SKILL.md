@@ -1,6 +1,6 @@
 ---
 name: implement-stepwise
-description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節奏實作單一張 ticket。首次調用時探索 codebase 並提出完整 commit checklist，經使用者確認後 append 進 ticket 檔案；之後每個 commit item 只設一個人工關卡：實作完停下回報，一併問使用者 commit 之後是要接著做下一個 item、還是停下本輪自行清 context，確認後由本 skill 執行 git commit 並勾選，再照答案走。內部調用 Matt 的 tdd skill 並覆寫三條規則。適合驗收條件多、預估 commit 三個以上的較重 ticket；小票請改用 implement-oneshot。當使用者要依 to-tickets 產出的 ticket 開始實作、且希望每個 commit 都親自過目時使用。
+description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節奏實作單一張 ticket。首次調用時探索 codebase 並提出完整 commit checklist，經使用者確認後 append 進 ticket 檔案；之後每個 commit item 只設一個人工關卡：實作完停下回報，結尾固定附上二選一：commit 後停下等使用者清 context，或 commit 後自動接續下一個 item；確認後由本 skill 執行 git commit 並勾選，再照答案走。內部調用 Matt 的 tdd skill 並覆寫三條規則。適合驗收條件多、預估 commit 三個以上的較重 ticket；小票請改用 implement-oneshot。當使用者要依 to-tickets 產出的 ticket 開始實作、且希望每個 commit 都親自過目時使用。
 ---
 
 # implement-stepwise
@@ -20,8 +20,8 @@ description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節�
 
 - **一次只處理一個 commit item。** 不得在同一個人工關卡內完成多個 item 的程式修改；要接著做下一個 item，必須是使用者在該關卡明確允許的。
 - **實作完成後不得直接 commit。** 必須先回報變更並等待使用者確認；使用者點頭後才由本 skill 執行 `git commit`。
-- **每個 commit 只設一個人工關卡，就在 commit 之前。** 回報變更時一併問清楚：commit 後要接著做下一個 item，還是停下本輪。**commit 之後不再多停一次徵詢**，照使用者已經給的答案走。
-- **commit 後的去向由使用者決定，本 skill 不自行判斷。** 包含要不要清 context——只提供判斷材料，不代為決定、也不預設答案。
+- **每個 commit 只設一個人工關卡，就在 commit 之前。** 回報變更時，結尾固定附上 A（commit 後停下等使用者清 context）/ B（commit 後自動接續下一個 item）二選一，格式見「執行模式」第 5 步。**commit 之後不再多停一次徵詢**，照使用者已經給的答案走。
+- **那兩個選項照抄，不要自己發揮。** 不增減選項、不附上建議或傾向、不分析該選哪個——commit 後的去向由使用者決定，本 skill 不代為判斷。
 - **不得自行重寫 commit checklist。** 發現 checklist 與實際程式碼不一致、或某個 commit 無法照規劃實作時，**暫停並回報**，由使用者決定是否重新規劃。
 - **只處理一張 ticket。** 不得跨 ticket 作業。
 
@@ -95,12 +95,17 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 2. 覆述該 commit 的目的、seam、預期變更檔案與邊界，確認與 checklist 一致。
 3. 依 `implementation-rules.md` 的 TDD 規範實作。
 4. **執行 typecheck**，並跑與本次變更相關的單一測試檔。
-5. 回報本次變更；列出應包含與應排除的檔案；給出建議的 commit message。**同時問使用者 commit 之後怎麼走**：
+5. 回報本次變更；列出應包含與應排除的檔案；給出建議的 commit message。這些原有資訊照舊全部保留，**最後固定以這個二選一收尾**：
 
-   - **(A) 接續** —— commit 完直接開始下一個 item，不再停。
-   - **(B) 停下** —— commit 完就結束本輪，由使用者自行決定要不要清 context 再開新一輪。
+   ```md
+   確認後我會執行 commit。commit 之後：
+   - A：停下，等你清空 context 再開新一輪
+   - B：自動接續下一個 commit item
+   ```
 
-   下一節是提供給使用者判斷的材料，可在此扼要帶出（例如下一個 item 是否碰同一批檔案、本輪 context 已累積多少）。**給材料就好，不要替使用者選，也不要預設立場。** checklist 已無其他 `[ ]` 項目時不必問，直接走收尾。
+   **照這個形式寫就好。** 不要自行增減選項、不要附加建議或傾向、不要替使用者分析該選哪個——`token-discipline.md` 之外的取捨是使用者的事，本 skill 只負責把選擇權交出去。使用者若想知道判斷依據，見下方「要不要清 context」一節。
+
+   checklist 已無其他 `[ ]` 項目時不必問這題，直接走收尾。
 
 6. **停止，等待使用者確認。** 這是本 commit 唯一的人工關卡，兩件事在這裡一次問完：commit 本身，以及 commit 之後的去向。
 7. 使用者確認後，執行 `git add` 與 `git commit`。
@@ -115,15 +120,15 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 
 9. 依第 5 步取得的答案決定去向：
 
-   - **選 (A)** → 直接回到第 1 步處理下一個 item，**不再另外徵詢**。回到第 2、3 步時，**先清點 context 裡已經有的東西再決定要讀什麼**：上一個 commit 讀過的檔案、剛寫出來的程式碼都還在，不要重讀。尤其是本輪新增的程式碼——`token-discipline.md` 要求這類程式碼不查圖譜、直接讀檔，而它們此刻已經在 context 裡，這正是接續模式最省的地方。
-   - **選 (B)** → **停止**，告知剩餘項目數，並提醒使用者自行決定要不要清 context；下一輪重新調用本 skill 即可接續。
-   - **使用者沒有明確表示** → 一律當作 (B) 停下。
+   - **選 A（停下）** → **停止**，告知剩餘項目數，下一輪重新調用本 skill 即可接續。
+   - **選 B（接續）** → 直接回到第 1 步處理下一個 item，**不再另外徵詢**。回到第 2、3 步時，**先清點 context 裡已經有的東西再決定要讀什麼**：上一個 commit 讀過的檔案、剛寫出來的程式碼都還在，不要重讀。尤其是本輪新增的程式碼——`token-discipline.md` 要求這類程式碼不查圖譜、直接讀檔，而它們此刻已經在 context 裡，這正是接續模式最省的地方。
+   - **使用者沒有明確表示** → 一律當作 A 停下。
 
 只實作當前 commit 範圍內的變更，不順手改動其他 item 或計畫外的程式碼。若實作過程中該 commit 的細節有合理調整（仍在原範圍與目的內），同步更新 checklist 該項的文字；但不得擴張或改變其整體方向。
 
-### 給使用者判斷「要不要清 context」的材料
+### 要不要清 context
 
-**這個決定屬於使用者，本 skill 不代為判斷。** 以下是提供給使用者權衡的事實，不是規則。
+**這個決定屬於使用者，本 skill 不代為判斷。** 以下是留給使用者自己翻閱的權衡材料，**不是每輪要背給使用者聽的內容**——第 5 步固定只給 A / B 兩個選項，除非使用者主動問起，否則不要複述本節。
 
 **清掉划算的情況：**
 
@@ -162,6 +167,6 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 
 ## 下一步引導（純提示，不主動調用）
 
-- **本輪 commit 完成、使用者選擇停下** → 告知剩餘項目數，提醒**要不要清 context 由使用者自行決定**（材料見「給使用者判斷『要不要清 context』的材料」），下一輪重新調用本 skill。
+- **本輪 commit 完成、使用者選 A（停下）** → 告知剩餘項目數，下一輪重新調用本 skill。不必再勸清或不清——使用者選 A 時就已經做完那個決定了。
 - **checklist 全部完成** → 提示使用者清空 context，取下一張 blocker 已滿足的 ticket。**整條 branch 的 ticket 全部完成後**，提示開新 session 執行 `to-acceptance-map` 做獨立的驗收覆蓋盤點。
 - **需要回頭修正** → commit 級 → 重新規劃 checklist；ticket 級（範圍、驗收條件有誤）→ 回到 `to-tickets`。
