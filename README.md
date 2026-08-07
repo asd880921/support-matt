@@ -12,7 +12,7 @@
 > [!NOTE]
 > 目前 Plugin 僅支持 **Claude Code** 與 **Codex** 安裝
 
-掛在 [Matt Pocock 的 skills](https://github.com/mattpocock/skills) 上運作的補強 skill 集：沿用 Matt 的流程骨架，補上公司實務需要、但 Matt 流程未涵蓋的環節。
+強化 [Matt Pocock 的 skills](https://github.com/mattpocock/skills)，提供更完整的落地開發工作流與規格文件生成。
 
 本 plugin 不取代 Matt 的任何 skill，需搭配該套 skill 使用。
 
@@ -37,13 +37,13 @@
 grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-tickets ─┐
                                                  └─ [engineering-spec-deliverable] 隨時可跑
                                                                           ↓
-                                          重票 → [implement-stepwise]  ／  輕票 → [implement-oneshot]
-                                                                          ↓
-                                                              [to-code-review]（合併前最後一關）
+                                          單 ticket 拆 Commit (逐筆檢核) → [implement-stepwise]  /  單張 ticket 一次做完 → [implement-oneshot]
                                                                           ↓
                           [to-engineering-spec 定稿] ← [to-acceptance-map]（branch 完成後，新 session）
+                                                                          ↓
+                                                              [to-code-review]（發 MR 前最後一關，自行 Code Review 驗證）
 
-開發中途要改：grill-me / grill-with-docs → [to-change-request] → implement
+開發中途要改：grill-me / grill-with-docs → [to-change-request] → implement (stepwise or oneshot)
 代審他人 MR：[to-code-review]（模式 B），與上面的 pipeline 無關
 ```
 
