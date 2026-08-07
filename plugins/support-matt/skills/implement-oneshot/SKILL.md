@@ -14,7 +14,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 | 執行單位 | 一整張 ticket | 一個 commit |
 | 人工關卡 | ticket 完成後一次 | 每個 commit 之前 |
 | 適合的 ticket | 邊界明確、預估 commit ≤ 3 | 驗收條件多、預估 commit ≥ 3 |
-| context | 一路到底 | 每個 commit 之間清空 |
+| context | 一路到底 | 每個 commit 之間，由使用者決定要不要清 |
 | `/code-review` | 完成後**詢問**使用者 | 不主動，由使用者自行決定 |
 
 **與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`，沒有詢問。本 skill 把那一步改成選擇題，並在使用者要跑時套用瘦身參數（見下）。

@@ -1,11 +1,11 @@
 ---
 name: implement-stepwise
-description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節奏實作單一張 ticket。首次調用時探索 codebase 並提出完整 commit checklist，經使用者確認後 append 進 ticket 檔案；之後每次調用只做下一個未完成的 commit item，實作完停下等使用者確認，確認後由本 skill 執行 git commit 並勾選，再停。內部調用 Matt 的 tdd skill 並覆寫三條規則。適合驗收條件多、預估 commit 三個以上的較重 ticket；小票請改用 implement-oneshot。當使用者要依 to-tickets 產出的 ticket 開始實作、且希望每個 commit 都親自過目時使用。
+description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節奏實作單一張 ticket。首次調用時探索 codebase 並提出完整 commit checklist，經使用者確認後 append 進 ticket 檔案；之後每個 commit item 只設一個人工關卡：實作完停下回報，一併問使用者 commit 之後是要接著做下一個 item、還是停下本輪自行清 context，確認後由本 skill 執行 git commit 並勾選，再照答案走。內部調用 Matt 的 tdd skill 並覆寫三條規則。適合驗收條件多、預估 commit 三個以上的較重 ticket；小票請改用 implement-oneshot。當使用者要依 to-tickets 產出的 ticket 開始實作、且希望每個 commit 都親自過目時使用。
 ---
 
 # implement-stepwise
 
-依單一張 ticket 實作，**一次一個 commit，每個 commit 前後都停下來讓人審查**。
+依單一張 ticket 實作，**一次一個 commit，每個 commit 送出之前停下來讓人審查**。
 
 本 skill 與 `implement-oneshot` 是同一套流程的兩種模式，共用實作規範，差別只在停下來的頻率：
 
@@ -14,13 +14,14 @@ description: 取代 Matt 的 implement，以「逐 commit 人工審查」的節�
 | 執行單位 | 一個 commit | 一整張 ticket |
 | 人工關卡 | 每個 commit 之前 | ticket 完成後一次 |
 | 適合的 ticket | 驗收條件多、預估 commit ≥ 3 | 邊界明確、預估 commit ≤ 3 |
-| context | 每個 commit 之間清空 | 一路到底 |
+| context | 每個 commit 之間，由使用者決定要不要清 | 一路到底 |
 
 ## 核心行為規範（最高優先，調用時必須遵守）
 
-- **一次只處理一個 commit item。** 不得連續完成多個 item 的程式修改。
+- **一次只處理一個 commit item。** 不得在同一個人工關卡內完成多個 item 的程式修改；要接著做下一個 item，必須是使用者在該關卡明確允許的。
 - **實作完成後不得直接 commit。** 必須先回報變更並等待使用者確認；使用者點頭後才由本 skill 執行 `git commit`。
-- **commit 完成後停下。** 勾選 `[x]` 後即結束本輪，等待使用者指示才處理下一個 item。
+- **每個 commit 只設一個人工關卡，就在 commit 之前。** 回報變更時一併問清楚：commit 後要接著做下一個 item，還是停下本輪。**commit 之後不再多停一次徵詢**，照使用者已經給的答案走。
+- **commit 後的去向由使用者決定，本 skill 不自行判斷。** 包含要不要清 context——只提供判斷材料，不代為決定、也不預設答案。
 - **不得自行重寫 commit checklist。** 發現 checklist 與實際程式碼不一致、或某個 commit 無法照規劃實作時，**暫停並回報**，由使用者決定是否重新規劃。
 - **只處理一張 ticket。** 不得跨 ticket 作業。
 
@@ -94,8 +95,14 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
 2. 覆述該 commit 的目的、seam、預期變更檔案與邊界，確認與 checklist 一致。
 3. 依 `implementation-rules.md` 的 TDD 規範實作。
 4. **執行 typecheck**，並跑與本次變更相關的單一測試檔。
-5. 回報本次變更；列出應包含與應排除的檔案；給出建議的 commit message。
-6. **停止，等待使用者確認。**
+5. 回報本次變更；列出應包含與應排除的檔案；給出建議的 commit message。**同時問使用者 commit 之後怎麼走**：
+
+   - **(A) 接續** —— commit 完直接開始下一個 item，不再停。
+   - **(B) 停下** —— commit 完就結束本輪，由使用者自行決定要不要清 context 再開新一輪。
+
+   下一節是提供給使用者判斷的材料，可在此扼要帶出（例如下一個 item 是否碰同一批檔案、本輪 context 已累積多少）。**給材料就好，不要替使用者選，也不要預設立場。** checklist 已無其他 `[ ]` 項目時不必問，直接走收尾。
+
+6. **停止，等待使用者確認。** 這是本 commit 唯一的人工關卡，兩件事在這裡一次問完：commit 本身，以及 commit 之後的去向。
 7. 使用者確認後，執行 `git add` 與 `git commit`。
 8. 將該項從 `[ ]` 改為 `[x]`，並依 `implementation-rules.md` 的「邊做邊記」在該項下方補記測試與涵蓋的驗收條件：
 
@@ -106,21 +113,32 @@ Ticket 標題、測試名稱與介面命名一律使用 `CONTEXT.md` 的領域�
          涵蓋: 驗收條件 #8, #9
    ```
 
-9. **停止**，並提醒使用者：**下一個 commit 請清空 context 後重新調用本 skill**。
+9. 依第 5 步取得的答案決定去向：
+
+   - **選 (A)** → 直接回到第 1 步處理下一個 item，**不再另外徵詢**。回到第 2、3 步時，**先清點 context 裡已經有的東西再決定要讀什麼**：上一個 commit 讀過的檔案、剛寫出來的程式碼都還在，不要重讀。尤其是本輪新增的程式碼——`token-discipline.md` 要求這類程式碼不查圖譜、直接讀檔，而它們此刻已經在 context 裡，這正是接續模式最省的地方。
+   - **選 (B)** → **停止**，告知剩餘項目數，並提醒使用者自行決定要不要清 context；下一輪重新調用本 skill 即可接續。
+   - **使用者沒有明確表示** → 一律當作 (B) 停下。
 
 只實作當前 commit 範圍內的變更，不順手改動其他 item 或計畫外的程式碼。若實作過程中該 commit 的細節有合理調整（仍在原範圍與目的內），同步更新 checklist 該項的文字；但不得擴張或改變其整體方向。
 
-### 為什麼每個 commit 之間都要清 context
+### 給使用者判斷「要不要清 context」的材料
 
-這是本 skill 相對 `implement-oneshot` 的主要優勢來源，**不清就等於沒有**。
+**這個決定屬於使用者，本 skill 不代為判斷。** 以下是提供給使用者權衡的事實，不是規則。
 
-agentic loop 的成本是「每回合的 context 大小」對回合數的累加，而 context 在一次 session 內只增不減——第 50 個回合送出的 prompt，仍帶著第 5 個回合讀進來的大型原始檔。一路做到底，成本是這條成長曲線的完整積分。
+**清掉划算的情況：**
 
-進度既然存放在 ticket 的 checklist 裡，每個 commit 就能是一次獨立的短 session，只讀該 commit 真正需要的檔案。
+- agentic loop 的成本是「每回合的 context 大小」對回合數的累加，而 context 在一次 session 內只增不減——第 50 個回合送出的 prompt，仍帶著第 5 個回合讀進來的大型原始檔。連著做完整張 ticket，付的是這條成長曲線的完整積分。
+- 長 context 還會拖累**準確度**：裡面躺著已經被改過的舊檔案內容、放棄的方案、失敗的測試輸出，越到後面的 commit，模型越容易錨定在過時的狀態上。
+- 本輪如果做過大量探索、或測試反覆失敗來回除錯，累積的雜訊特別多。
+- 下一個 item 動的是不同模組、不同檔案，帶著走的東西幾乎用不上。
 
-而且逐 commit 審查**本身會增加回合數**（回報 → 確認 → commit → 勾選）。在乾淨的小 context 裡這些回合很便宜；在累積的大 context 裡，每一個都要重付一次完整 context。**同一個設計，清與不清，一個省錢一個燒錢。**
+**留著划算的情況：**
 
-因此不要為了「順手」而在同一個 context 內連續做多個 commit。
+- 下一個 item 與本輪共用同一批檔案與 seam，尤其是要接上本輪剛寫出來的程式碼——那些內容**不在圖譜索引裡**（見 `token-discipline.md`），清掉只能重新整檔讀回來。
+- 本輪 context 還很乾淨：沒有整檔讀過大檔、沒有除錯回圈。
+- 重新進入是有成本的：清掉之後要重讀 `issue-tracker.md`、`domain.md`、ticket 全文，再重新定位一次程式碼，而且這些都是未命中快取的新 token。
+
+進度存放在 ticket 的 checklist 裡，因此**清或不清都不會遺失狀態**——每個 commit 都能是一次獨立的短 session，也能接著同一個 context 做下去。這正是這個決定可以交給使用者的原因。
 
 ## 收尾（checklist 全部完成時）
 
@@ -144,6 +162,6 @@ agentic loop 的成本是「每回合的 context 大小」對回合數的累加�
 
 ## 下一步引導（純提示，不主動調用）
 
-- **本輪 commit 完成、仍有未完成項目** → 告知剩餘項目數，並明確提醒**清空 context 後再調用本 skill 做下一個 commit**。
+- **本輪 commit 完成、使用者選擇停下** → 告知剩餘項目數，提醒**要不要清 context 由使用者自行決定**（材料見「給使用者判斷『要不要清 context』的材料」），下一輪重新調用本 skill。
 - **checklist 全部完成** → 提示使用者清空 context，取下一張 blocker 已滿足的 ticket。**整條 branch 的 ticket 全部完成後**，提示開新 session 執行 `to-acceptance-map` 做獨立的驗收覆蓋盤點。
 - **需要回頭修正** → commit 級 → 重新規劃 checklist；ticket 級（範圍、驗收條件有誤）→ 回到 `to-tickets`。
