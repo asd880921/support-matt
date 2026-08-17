@@ -1,7 +1,7 @@
 # support-matt
 
-套件版本：`v0.9.0`
-更新時間：2026-08-07
+套件版本：`v0.10.0`
+更新時間：2026-08-17
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json，發版時一併更新此處版本與日期 -->
 
