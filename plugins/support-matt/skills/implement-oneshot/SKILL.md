@@ -19,6 +19,8 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 **與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`，沒有詢問。本 skill 把那一步改成選擇題，並在使用者要跑時套用瘦身參數（見下）。
 
+想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-checkpoint`——核心與本 skill 完全相同，只把 commit 從自動送出改成確認後送出。
+
 ## 核心行為規範（最高優先，調用時必須遵守）
 
 - **開場必須先做規模評估**，未評估不得開始實作。

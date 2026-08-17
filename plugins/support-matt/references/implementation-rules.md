@@ -1,6 +1,6 @@
 # 實作規範
 
-`implement-stepwise` 與 `implement-oneshot` 共用。修改本檔會同時影響兩者。
+`implement-stepwise`、`implement-oneshot` 與 `implement-checkpoint` 共用。修改本檔會同時影響三者。
 
 ## TDD
 
