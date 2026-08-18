@@ -1,6 +1,6 @@
 ---
 name: to-issue-doc
-description: 維護單一份要貼上公司主 GitLab Issue 的規格文件 issue-doc.md（拆票 issue 放在該 issue 的 comments）。刻意把重量往後挪：拆完票、動工之前只寫一頁 brief——目標與範圍、方案輪廓、關鍵決策、驗證條件 VC-xx、風險，其中只有 VC 那張表需要使用者逐條確認；開發中途由 to-change-request 委派或自行調用修訂模式就地改；整條 branch 實作完成後跑 final 模式，先依實際交付校準 VC，再由既成事實（程式碼、ticket 驗收核對表、git diff）補齊系統分析、資料模型、介面與流程，輸出可直接貼上 Issue 的完稿，不另產交付版檔案。三種模式共用同一份文件，一律就地修訂。本 skill 不拆 ticket、不寫程式、不盤點測試覆蓋、不建立或修改任何遠端 Issue。動到角色權限、schema、跨模組交易邊界的重案，改用 to-engineering-spec。當使用者要在 Matt workflow 中產出並維護主 Issue 用的規格文件時使用。
+description: 維護單一份要貼上公司主 GitLab Issue 的規格文件 issue-doc.md（拆票 issue 放在該 issue 的 comments）。刻意把重量往後挪：拆票之前只寫一頁 brief——目標與範圍、方案輪廓、關鍵決策、驗證條件 VC-xx、風險，其中只有 VC 那張表需要使用者逐條確認；開發中途由 to-change-request 委派或自行調用修訂模式就地改；整條 branch 實作完成後跑 final 模式，先依實際交付校準 VC，再由既成事實（程式碼、ticket 驗收核對表、git diff）補齊系統分析、資料模型、介面與流程，輸出可直接貼上 Issue 的完稿，不另產交付版檔案。三種模式共用同一份文件，一律就地修訂。本 skill 不拆 ticket、不寫程式、不盤點測試覆蓋、不建立或修改任何遠端 Issue。動到角色權限、schema、跨模組交易邊界的重案，改用 to-engineering-spec。當使用者要在 Matt workflow 中產出並維護主 Issue 用的規格文件時使用。
 ---
 
 # to-issue-doc
@@ -13,7 +13,7 @@ description: 維護單一份要貼上公司主 GitLab Issue 的規格文件 issu
 
 | 內容 | 最佳時機 | 理由 |
 | --- | --- | --- |
-| 驗證條件 `VC-xx`、範圍邊界、關鍵決策 | **實作前**（拆票之後） | 它們是**約束**：事前定版才擋得住走偏，事後補寫只是敘述 |
+| 驗證條件 `VC-xx`、範圍邊界、關鍵決策 | **拆票前** | 它們是**約束**：拆票本身就是設計行為，落點與邊界沒先定版，決策會發生在拆票裡而沒有紀錄 |
 | 系統分析、資料模型、介面與流程、實作落點 | **實作後** | 它們是**紀錄**：程式碼就是答案，事前寫是猜，事後抄才準 |
 
 因此本 skill 把文件切成兩個時點寫，而不是一次寫完：**brief 只寫上排，final 才補下排**。這是它與 `to-engineering-spec` 的根本差異——那支要求在動工前把系統分析與技術設計一次寫到位，適合動角色權限、動 schema、跨模組交易邊界的重案；一般案子用本 skill。
@@ -21,14 +21,19 @@ description: 維護單一份要貼上公司主 GitLab Issue 的規格文件 issu
 ## 工作流位置
 
 ```text
-grill-with-docs → to-spec → to-tickets → [to-issue-doc brief] → implement(-oneshot/-checkpoint)
-                                                 ↑                              ↓
-                                 [to-issue-doc 修訂] ← to-change-request   全部 ticket 完成
-                                                                                ↓
-                       貼上主 Issue ← to-acceptance-map ← [to-issue-doc final]
+grill-with-docs → to-spec → [to-issue-doc brief] → to-tickets → implement(-oneshot/-checkpoint)
+                                    ↑                                          ↓
+                    [to-issue-doc 修訂] ← to-change-request           全部 ticket 完成
+                                                                               ↓
+                      貼上主 Issue ← to-acceptance-map ← [to-issue-doc final]
 ```
 
-**brief 在 `to-tickets` 之後、`implement` 之前。** 兩個理由：`VC-xx` 的歸屬判準是「這條若沒過，有沒有任何單一 Ticket 會發現」——**票在手上時這個判準才執行得動**；而 `to-tickets` 只吃 `spec.md`，不讀本文件，往後挪不影響拆票品質。約束力不受影響，brief 仍在動工前定版。
+**brief 在 `to-tickets` 之前，不是之後。** 兩個理由，都與「順手」無關：
+
+- **拆票是設計行為。** 要把功能切成有相依順序、各自可獨立完成的切片，必須先決定落點：沿用哪些既有機制、資料寫入責任在誰、新邊界畫在哪。brief 放在拆票之後，不會讓這些決策不發生，只會讓它們**發生在拆票裡、沒有紀錄、沒有經過使用者確認**，而票是 `implement` 唯一實際吃的東西。
+- **`VC-xx` 不能被票錨定。** `to-acceptance-map` 明訂驗證基準不得來自 ticket，且 feature 層級盤點的存在理由，正是回收那些任何單張票都看不到的條目（否定式約束、跨切片一致性）。看著票寫 VC，最可能的結果不是寫錯，而是變成「各票驗收條件的並集」——每條都合理、沒有任何症狀，卻剛好丟掉這張表唯一不可取代的部分。
+
+沒有票在手時 `VC-xx` 照樣判得動，判的是條目性質不是切分方式，見「驗證條件」一節的四類判準。漏收由 `final` 的校準兜底。
 
 **`final` 必須在 `to-acceptance-map` 之前跑。** `to-acceptance-map` 拿本文件的 `VC-xx` 當唯一驗證基準，而 `final` 的第一件事就是依實際交付校準那張表；順序反過來，盤點的是開發前的舊基準。
 
@@ -62,13 +67,13 @@ grill-with-docs → to-spec → to-tickets → [to-issue-doc brief] → implemen
 1. `.ai/docs/agents/issue-tracker.md`（找不到改讀 `docs/agents/issue-tracker.md`）—— 檔案位置與慣例。兩者皆無則請使用者先跑 `setup-matt-preset`。
 2. `.ai/docs/agents/domain.md` 指出的 `CONTEXT.md` 與 ADR —— 命名與既有決策的依據；檔案不存在時**靜默略過**。
 3. `spec.md` —— 需求權威。**brief 模式必讀。**
-4. `issues/` 下的 ticket —— **brief 與 final 都必讀**。brief 時讀的是切分與各票的驗收條件（`VC-xx` 歸屬判準要靠它執行）；final 時另外讀各票的驗收核對表。
+4. `issues/` 下的 ticket（含驗收核對表）—— **final 模式必讀**；brief 模式時尚未拆票，不存在。
 
 命名一律使用 `CONTEXT.md` 的領域詞彙；與既有 ADR 抵觸時明確指出，不默默覆蓋。
 
 ## brief 模式
 
-在 `to-tickets` 拆完票之後、動工之前執行。目標是**十分鐘寫完、讀審的人看得懂你要做什麼**。章節固定如下，寫不滿的章節留一行「本次無」，不要為了填滿而膨脹。
+在 `to-spec` 之後、`to-tickets` 之前執行。目標是**十分鐘寫完、讀審的人看得懂你要做什麼**。章節固定如下，寫不滿的章節留一行「本次無」，不要為了填滿而膨脹。
 
 ```md
 # <功能名稱>
@@ -96,9 +101,13 @@ grill-with-docs → to-spec → to-tickets → [to-issue-doc brief] → implemen
 已知風險、尚未拍板的問題。沒有就寫「無」。
 ```
 
-寫完後把整份攤給使用者，**只針對 `VC-xx` 那張表請他逐條確認**；其餘章節請他掃一眼有無明顯錯誤。確認完成即停止，並提示下一步是 `implement`。
+寫完後把整份攤給使用者，**只針對 `VC-xx` 那張表請他逐條確認**；其餘章節請他掃一眼有無明顯錯誤。確認完成即停止，並在回報中給出可直接貼的下一步：
 
-**寫 brief 時若發現票拆歪了**（邊界重疊、某張票大到無法一次做完、缺一張明顯該有的票），**停下來說**，建議使用者回 `to-tickets` 重拆——此刻重拆的成本遠低於實作到一半才發現。本 skill 自己不動 `issues/`。
+```text
+$to-tickets 依 .ai/.scratch/<feature-slug>/spec.md 與 .ai/.scratch/<feature-slug>/issue-doc.md 拆票，並參照 .ai/docs/adr/ 與 .ai/CONTEXT.md
+```
+
+**`方案輪廓` 與 `關鍵決策` 就是拆票的輸入**，因此那一行要帶上本文件；`$to-tickets ...` 只出現在回報訊息，不寫進文件。
 
 ## 驗證條件（`VC-xx`）
 
@@ -110,7 +119,16 @@ grill-with-docs → to-spec → to-tickets → [to-issue-doc brief] → implemen
 
 欄位必填、錯誤訊息原文、格式、預設值、選項連動、分頁筆數、排序方向——開票當下就驗掉了，寫進來不增加任何保護，只會讓這張表隨欄位數量無限膨脹。**這是本章唯一的失控模式**，而且每一條單看都合理、都可判斷真偽，粒度檢查完全攔不住。
 
-留下來的是**沒有任何單一切片看得到的東西**：跨切片的一致性（同一取值在顯示、篩選、排序三處一致）、整條規則的最終效果、權限的實際攔截、對實作路徑的要求（N+1、判定是否下推到資料庫）。量級參考**約一條業務規則一條**，一般功能 8-12 條。
+留下來的是**沒有任何單一切片看得到的東西**，就是下面這四類：
+
+1. **跨切片的一致性** —— 同一取值在顯示、篩選、排序三處一致；查詢與匯出走同一條取資料路徑。
+2. **整條規則的最終效果** —— 各票各做一段，合起來是否真的達成該業務規則要求的結果。
+3. **權限的實際攔截** —— 不是畫面有沒有藏按鈕，是後端擋不擋得住。
+4. **對實作路徑的要求** —— 未產生 N+1、判定下推到資料庫、未使用某個已淘汰的機制。
+
+**這四類判得動不需要有票在手**——判的是條目的性質，不是切分方式；票在手上只會讓它更省力。反過來說，寫 brief 時看不到票是**好事**：否定式的約束（「未使用 X」「未產生 Y」）在票裡沒有影子，盯著票寫必然漏掉它們，而那正是這張表唯一不可取代的部分。
+
+量級參考**約一條業務規則一條**，一般功能 8-12 條。
 
 | 欄位 | 內容 |
 | --- | --- |
@@ -190,12 +208,12 @@ final 完成的文件會被整份貼進 GitLab，因此：
 | 測試對 `VC-xx` 的覆蓋情形 | `acceptance-map.md`（`to-acceptance-map`） |
 | 專案術語 | `.ai/CONTEXT.md` |
 
-- **`to-tickets`** 只讀 `spec.md` 拆票，**不讀本文件**（brief 在它之後才寫）；本 skill 不自己拆、不調用它、不改 `issues/`。
+- **`to-tickets`** 讀 `spec.md` 與本文件的 brief 拆票（`方案輪廓`、`關鍵決策` 是切分的輸入）；本 skill 不自己拆、不調用它、不改 `issues/`。拆票過程若發現 brief 的方案輪廓站不住，回本 skill 修訂模式，不要在票裡默默改設計。
 - **`to-acceptance-map`** 讀本文件的 `VC-xx`；本 skill 不做覆蓋盤點，也不把測試結果寫進本文件。
 - **`to-code-review`** 與本文件無耦合。
 
 ## 下一步引導（純提示，不主動調用）
 
-- **brief 完成** → 提示把 brief 貼上主 Issue 佔位，接著開第一張票走 `implement`。
+- **brief 完成** → 提示把 brief 貼上主 Issue 佔位，接著執行 `to-tickets` 拆票（那一行指令見「brief 模式」）。
 - **修訂完成** → 回到 `to-change-request` 追加 ticket，或直接 `implement`。
 - **final 完成** → 提示執行 `to-acceptance-map`，兩份檔案一起貼上主 Issue。
