@@ -21,6 +21,8 @@ grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-ti
 
 **不是每個需求都需要它。** 小改動（不動角色權限、不跨模組、不動既有架構假設、無 schema 變更）直接走 `to-spec → to-tickets → implement`，不要為了走完整流程而產生一份沒人會讀的文件。
 
+**需要一份貼主 Issue 的文件、但不需要動工前的完整技術設計時，用 `to-issue-doc`。** 那支把重量往後挪：拆完票只寫一頁 brief（範圍、方案輪廓、關鍵決策、`VC-xx`），branch 做完再由既成事實補齊。本 skill 留給真正的重案——動角色權限、動 schema 且牽動交易邊界、改變既有架構假設，或公司要求動工前提交完整技術設計供審查。
+
 ## References
 
 - **開始任何寫入前**，讀 `references/workflow.md`（模式判定、確認關卡、各模式流程、送出前自檢）。

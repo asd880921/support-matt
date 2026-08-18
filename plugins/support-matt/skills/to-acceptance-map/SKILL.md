@@ -1,6 +1,6 @@
 ---
 name: to-acceptance-map
-description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨立 session 盤點自動化測試對驗證基準的覆蓋情形，產出可與交付版規格一起貼上 Issue 的 acceptance-map.md。驗證基準只有一個來源：engineering-spec.md 的「驗證條件」（VC-xx）——ticket 不是驗證來源，只當定位測試的搜尋線索。逐項判定已涵蓋／覆蓋不足／需補測試／不適用測試並標註對應測試，另外檢出因後續調整而可能已失效、卻仍是綠燈的舊測試（只提示不主張刪除）。執行前先詢問測試執行範圍（全部／受影響／不跑），並逐一執行各測試專案而非整個 solution 一次跑。對 ticket、設計文件、功能程式碼與測試程式一律唯讀，只建立或覆寫 acceptance-map.md；不補寫測試、不修程式。當使用者在 branch 開發完畢、要做最終覆蓋盤點並取得可追溯的驗證基準對測試清單時使用。
+description: 整條 branch 開發完畢、規格文件收斂完成後（`issue-doc.md` 跑完 final；重案流程為 `engineering-spec.md` 定稿），於獨立 session 盤點自動化測試對驗證基準的覆蓋情形，產出可與規格一起貼上 Issue 的 acceptance-map.md。驗證基準只有一個來源：規格文件的「驗證條件」（VC-xx）——ticket 不是驗證來源，只當定位測試的搜尋線索。逐項判定已涵蓋／覆蓋不足／需補測試／不適用測試並標註對應測試，另外檢出因後續調整而可能已失效、卻仍是綠燈的舊測試（只提示不主張刪除）。執行前先詢問測試執行範圍（全部／受影響／不跑），並逐一執行各測試專案而非整個 solution 一次跑。對 ticket、設計文件、功能程式碼與測試程式一律唯讀，只建立或覆寫 acceptance-map.md；不補寫測試、不修程式。當使用者在 branch 開發完畢、要做最終覆蓋盤點並取得可追溯的驗證基準對測試清單時使用。
 ---
 
 # to-acceptance-map
@@ -9,7 +9,9 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 ## 驗證基準只有一個來源
 
-**`engineering-spec.md` 的「驗證條件」（`VC-xx`）。ticket 不是驗證來源。**
+**規格文件的「驗證條件」（`VC-xx`）。ticket 不是驗證來源。**
+
+本 skill 說的**規格文件**，預設是 `issue-doc.md`（`to-issue-doc`，狀態 `final`）；動角色權限、schema、跨模組交易的重案流程則是 `engineering-spec.md`（`to-engineering-spec`，狀態 `定稿`）。兩者的「驗證條件」章格式相同，本 skill 的處理方式完全一致——以下一律稱**規格文件**，只在需要區分時點名。
 
 理由是**時態**。Matt workflow 是 append-only：開發中途有新需求或要調整，作法是再開一張 ticket 接續做完，而後開的票**可能砍掉或改寫前面票的功能**，舊票不會回頭更新。把各 ticket 的驗收條件平鋪匯集，等於拿一疊不同時間點的快照當現況，會同時產生三種錯：
 
@@ -17,15 +19,15 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 - 已被砍掉的功能報成「已涵蓋」——**舊測試沒跟著刪，還是綠的**。這種假好消息最危險，它同時掩蓋了「這條不該存在」與「實作可能沒砍乾淨」。
 - 互相矛盾的兩條條文並存，而表格沒有任何欄位能表達哪條才是現行事實。
 
-`engineering-spec.md` 是這條管線裡唯一會**就地修訂**的文件，定稿模式還會專門從 ticket 收斂驗證條件（新增 / 改寫 / 刪除）。以它為準，上述三種錯全部不會發生。
+規格文件是這條管線裡唯一會**就地修訂**的文件，收斂步驟（`to-issue-doc` 的 final／`to-engineering-spec` 的定稿）還會專門依實際交付校準驗證條件（新增 / 改寫 / 刪除）。以它為準，上述三種錯全部不會發生。
 
 **ticket 仍然要讀，但只有一個用途，且不涉及判定：當搜尋線索。** commit checklist 的 `tests` 行與收尾的驗收核對表，是定位測試最快的路徑。
 
-**不要拿 ticket 反向盤點規格**——「ticket 有而規格沒有」的項目不列、不提醒。ticket 的驗收條件在開發當下已逐張驗收過，把它們再攤回來對規格，等於用一疊舊快照重驗一輪，正是上面那三種錯的來源。規格漏收該由 `to-engineering-spec` 定稿時收斂，不是這裡。
+**不要拿 ticket 反向盤點規格**——「ticket 有而規格沒有」的項目不列、不提醒。ticket 的驗收條件在開發當下已逐張驗收過，把它們再攤回來對規格，等於用一疊舊快照重驗一輪，正是上面那三種錯的來源。規格漏收該由 `to-issue-doc` final（重案為 `to-engineering-spec` 定稿）收斂，不是這裡。
 
 ## 為什麼要獨立執行
 
-`implement-stepwise` 在每個 commit 完成時會記錄「本次寫了哪些測試、涵蓋哪幾條驗收條件」。**那份記錄是實作者的自我聲明，不是證據。**
+`implement-checkpoint` / `implement-oneshot` 在每個 commit 完成時會記錄「本次寫了哪些測試、涵蓋哪幾條驗收條件」。**那份記錄是實作者的自我聲明，不是證據。**
 
 本 skill 的價值來自獨立性：在**乾淨的新 session** 執行，不帶開發過程的 context，逐項自行確認測試確實存在、且真的涵蓋該項目。
 
@@ -36,7 +38,7 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 ## 唯讀規範（最高優先）
 
 - **只建立或覆寫 `acceptance-map.md` 一個檔案。**
-- 對 ticket 檔案、`engineering-spec.md`、`spec.md`、功能程式碼、測試程式**一律唯讀**。
+- 對 ticket 檔案、規格文件、`spec.md`、功能程式碼、測試程式**一律唯讀**。
 - **不補寫任何測試、不修改任何程式碼、不修改設計文件、不勾選任何 checklist。**
 - **不刪除任何測試**——包含步驟 4.1 列為可能已失效的那些。刪不刪由使用者決定。
 - 發現缺漏時只回報，由使用者決定後續處理。
@@ -48,7 +50,7 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 從使用者指定的 feature 目錄取得（路徑依 `.ai/docs/agents/issue-tracker.md` 的慣例，通常是 `.ai/.scratch/<feature>/`）：
 
-- **`engineering-spec.md`** —— 驗證基準的唯一來源，**必要**。
+- **規格文件**（`issue-doc.md`；重案流程為 `engineering-spec.md`）—— 驗證基準的唯一來源，**必要**。
 - `issues/` 底下全部 ticket 檔案 —— 只作定位測試的搜尋線索。
 
 未指定時，依當前 git 分支名稱推斷對應的 feature 目錄；推斷不出來就停下來問，不要猜。
@@ -57,13 +59,13 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 | 情況 | 為什麼要先問 |
 | --- | --- |
-| `engineering-spec.md` 不存在，或沒有「驗證條件」章 | 沒有驗證基準就沒有可盤點的對象。**不要退回去拿 ticket 的驗收條件充數**——那正是本 skill 刻意不做的事。請使用者先跑 `to-engineering-spec` |
-| `engineering-spec.md` 的 `文件狀態` 不是 `定稿` | 定稿模式才會從 ticket 收斂驗證條件（新增 / 改寫 / 刪除）。跳過它，盤點基準可能停在開發前的版本，被砍掉的功能還在表上 |
+| 規格文件不存在，或沒有「驗證條件」章 | 沒有驗證基準就沒有可盤點的對象。**不要退回去拿 ticket 的驗收條件充數**——那正是本 skill 刻意不做的事。請使用者先跑 `to-issue-doc`（重案為 `to-engineering-spec`） |
+| 規格文件的 `文件狀態` 不是 `final`（重案為 `定稿`） | 收斂步驟才會依實際交付校準驗證條件（新增 / 改寫 / 刪除）。跳過它，盤點基準會停在開發前的版本，被砍掉的功能還在表上 |
 | 仍有 ticket 的 Commit checklist 未全部勾完 | 對未完成的 branch 盤點，結果會大量出現「需補測試」而失去意義 |
 
 ### 2. 取得驗證基準
 
-從 `engineering-spec.md` 的「驗證條件」章讀**那一張表**，**沿用其原始編號**（`VC-xx`）——編號是跨文件的追溯鍵，本 skill 不重新編號、不合併、不拆條。每條帶著規格給的「驗證方式」，那是判定的重要輸入（見步驟 4）。
+從規格文件的「驗證條件」章讀**那一張表**，**沿用其原始編號**（`VC-xx`）——編號是跨文件的追溯鍵，本 skill 不重新編號、不合併、不拆條。每條帶著規格給的「驗證方式」，那是判定的重要輸入（見步驟 4）。
 
 **整張表都必須納入，包含從未被任何 ticket 吸收的項目。** 這是本 skill 存在的理由之一：以否定式陳述表達的約束（「未使用 X」「未產生 Y」）在拆票時容易蒸發，因為它們演示不出來；feature 層級的盤點是它們唯一的回收點。
 
@@ -135,7 +137,7 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 - **規格的「驗證方式」欄優先於本 skill 的推測。** 該欄填 `自動化測試` 的項目，沒有測試就是「需補測試」，**不得判為「不適用測試」**——那是規格已經做過的判斷，本 skill 無權推翻。填 `人工檢視` / `靜態檢查` 的，才有資格進「不適用測試」，且仍要寫理由。
 - **填 `靜態檢查` 的多是對實作路徑的約束**（「四道判定全部在資料庫執行」），落在「不適用測試」是正常結果，不是本 skill 偷懶。但**不要因為它填了 `靜態檢查` 就免驗**——仍要逐條跑下面的規則，確認它真的測不到。
-- 舊版 `engineering-spec.md` 沒有「驗證方式」欄時，回退到下面的自行判斷規則。
+- 規格文件沒有「驗證方式」欄時，回退到下面的自行判斷規則。
 - **必須逐項寫出理由**，不得只標分類不說明。
 - **只有下列性質的項目可以判為「不適用測試」**：
   - 結構性約束（「四道判定全部在資料庫執行」「未使用含系統倉短路的授權判斷式」「三處共用同一個運算式」）——測試看不到實作走哪條路徑。
@@ -173,7 +175,7 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 - 分支：<branch-name>
 - 盤點時間：<YYYY-MM-DD>
-- 驗證基準：engineering-spec.md（文件狀態 <定稿 YYYY-MM-DD>）的驗證條件
+- 驗證基準：<issue-doc.md | engineering-spec.md>（文件狀態 <final | 定稿 YYYY-MM-DD>）的驗證條件
 - 測試執行範圍：<全部 / 受影響 / 未執行>
 
 ## 摘要
@@ -232,21 +234,23 @@ description: 整條 branch 開發完畢、engineering-spec.md 定稿後，於獨
 
 - 盤點的是**測試覆蓋**，不是功能是否完成，也不是程式碼品質。發現實作缺陷時可在備註指出，但不擴大成 code review。
 - 驗收項目本身有問題時（語意矛盾、粒度過粗、無法判定真偽），照實記錄為「無法判定」並說明，**不要自行改寫項目**，也不要回頭修設計文件。
-- **不收斂驗證條件。** 從 ticket 折回新增 / 改寫 / 刪除 `VC-xx`，是 `to-engineering-spec` 定稿模式的職責，發生在本 skill 之前。本 skill 只回報缺口，一個字都不改。
-- 本檔案與 `engineering-spec_deliverable.md` 是**兩份獨立的檔案**，各自產出、各自重跑，不互相內嵌。貼上 Issue 時一起貼。
+- **不收斂驗證條件。** 依實際交付新增 / 改寫 / 刪除 `VC-xx`，是 `to-issue-doc` final（重案為 `to-engineering-spec` 定稿）的職責，發生在本 skill 之前。本 skill 只回報缺口，一個字都不改。
+- 本檔案與規格文件是**兩份獨立的檔案**，各自產出、各自重跑，不互相內嵌。貼上 Issue 時一起貼。
 
 ## 在流程中的位置
 
 ```text
-… implement 全部完成 → to-engineering-spec 定稿（收斂驗證條件）
+… implement 全部完成 → to-issue-doc final（校準驗證條件、補齊交付內容）
                           → to-acceptance-map（本 skill，盤點覆蓋）
-                          → engineering-spec-deliverable（產交付版）
+                          → 兩份檔案一起貼上主 Issue
 ```
 
-**定稿必須在本 skill 之前**——本 skill 讀的驗證基準就是定稿的產物。順序反了，盤點的是一份還沒收斂的規格。
+（重案流程把第一步換成 `to-engineering-spec` 定稿，最後多一步 `engineering-spec-deliverable` 產交付版。）
+
+**收斂必須在本 skill 之前**——本 skill 讀的驗證基準就是它的產物。順序反了，盤點的是一份還沒收斂的規格。
 
 ## 下一步引導（純提示，不主動調用）
 
-- **有需補測試或覆蓋不足** → 提示使用者可回到 `implement-stepwise`，將補測試視為新的 commit item 處理；補完後重跑本 skill。
+- **有需補測試或覆蓋不足** → 提示使用者可回到 `implement-checkpoint` / `implement-oneshot` 補測試；補完後重跑本 skill。
 - **有可能已失效的測試** → 交由使用者判斷刪、改或留，本 skill 不動它。
-- **全部收斂** → 提示使用者可回 `to-engineering-spec` 以修訂模式，依本檔案逐條補上驗證條件的「驗證結果」欄，再以 `engineering-spec-deliverable` 產出交付版，與本檔案一起貼上 Issue。
+- **全部收斂** → 提示使用者可回 `to-issue-doc` 以修訂模式，依本檔案逐條補上驗證條件的「驗證結果」欄，再與本檔案一起貼上主 Issue。（重案流程改回 `to-engineering-spec` 修訂，並以 `engineering-spec-deliverable` 產交付版。）

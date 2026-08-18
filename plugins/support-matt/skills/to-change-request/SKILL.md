@@ -5,7 +5,9 @@ description: 開發中途發現需要改動時的再入點：接在 grill 之後
 
 # to-change-request
 
-開發中途改變主意時的**再入點**。接在 grill 之後、`implement` 之前，把 grill 的結論同步進 `spec.md` 與 `engineering-spec.md`，並追加一張 ticket。
+開發中途改變主意時的**再入點**。接在 grill 之後、`implement` 之前，把 grill 的結論同步進 `spec.md` 與本 feature 的規格文件，並追加一張 ticket。
+
+> **規格文件指哪一份**：預設是 `issue-doc.md`，修訂委派給 `to-issue-doc`（修訂模式）；重案流程（動角色權限、schema、跨模組交易）是 `engineering-spec.md`，委派給 `to-engineering-spec`（修訂模式）。以哪一份實際存在於 feature 目錄為準，兩份都在時以 `engineering-spec.md` 為準。**本檔以下一律寫 `engineering-spec.md`，那些敘述對 `issue-doc.md` 同樣成立**——差別只有委派對象與狀態名稱（`定稿` 對應 `final`）。
 
 ## 工作流位置
 
