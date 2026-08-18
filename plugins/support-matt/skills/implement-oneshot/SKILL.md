@@ -1,11 +1,11 @@
 ---
 name: implement-oneshot
-description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt 原生的 implement，但有三處差異：開場先評估 ticket 規模，過重時建議改用 implement-stepwise 或回 to-tickets 拆小；ticket 完成後詢問使用者是否執行 code-review，不強制綁定；執行時套用 token 紀律與瘦身版的 code-review 參數。適合邊界明確、預估 commit 三個以內的較小 ticket。當使用者要一次做完一張小票、不需要逐 commit 停下審查時使用。
+description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt 原生的 implement，但有三處差異：開場先評估 ticket 規模，過重時建議回 to-tickets 拆小；ticket 收尾（跑受影響範圍測試、逐條核對驗收條件、寫回 ticket）完成後即結束，完全不執行也不引導 code-review；執行時套用 token 紀律。適合邊界明確、預估 commit 三個以內的較小 ticket。當使用者要一次做完一張小票、不需要逐 commit 停下審查時使用。
 ---
 
 # implement-oneshot
 
-在**單一 session** 內把一整張 ticket 做完，收尾時由使用者決定要不要跑 `/code-review`。
+在**單一 session** 內把一整張 ticket 做完，收尾完就結束。
 
 本 skill 與 `implement-stepwise` 是同一套流程的兩種模式，共用實作規範，差別只在停下來的頻率：
 
@@ -15,9 +15,9 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 | 人工關卡 | ticket 完成後一次 | 每個 commit 之前 |
 | 適合的 ticket | 邊界明確、預估 commit ≤ 3 | 驗收條件多、預估 commit ≥ 3 |
 | context | 一路到底 | 每個 commit 之間，由使用者決定要不要清 |
-| `/code-review` | 完成後**詢問**使用者 | 不主動，由使用者自行決定 |
+| `/code-review` | 不執行、不引導 | 不主動，由使用者自行決定 |
 
-**與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`，沒有詢問。本 skill 把那一步改成選擇題，並在使用者要跑時套用瘦身參數（見下）。
+**與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`。本 skill 把那一步整段拿掉——收尾已經對本次 task 做過一輪驗收，單張票再跑一次審查是重複工；審查的位置在整條 branch 做完之後的 `to-code-review`。真的要對單一 task 跑審查時，改調用 Matt 原生的 `implement`。
 
 想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-checkpoint`——核心與本 skill 完全相同，只把 commit 從自動送出改成確認後送出。
 
@@ -25,7 +25,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 - **開場必須先做規模評估**，未評估不得開始實作。
 - **一整張 ticket 做完才停。** 中途不逐 commit 徵詢，但每個 commit 仍各自成形、各自 commit。
-- **`/code-review` 一律用問的，不得自行執行。**
+- **不執行 `/code-review`，也不詢問、不提示、不列選項。** 收尾結束就是本 skill 的終點。
 - **只處理一張 ticket。** 不得跨 ticket 作業。
 
 ## 共用規範（必讀）
@@ -92,41 +92,13 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 ## 4. 收尾
 
-依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報、詢問冷眼審查。**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 5——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
 
 **寫回 ticket 對本 skill 特別重要。** 它不像 `implement-stepwise` 會在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
 
 回報時一併列出全部 commit 清單。
 
-接著進入下一節的 code-review 詢問。
-
-## 5. code-review 詢問
-
-**問，不要自己跑。** 明確告訴使用者三個選項與各自的取捨：
-
-```text
-Ticket 已完成，N 個 commit，受影響範圍測試通過，驗收條件 M/M 達成。
-（完整測試套件未跑——整條 branch 結束後由 to-acceptance-map 執行）
-
-要執行 code-review 嗎？
-  1. 不跑 —— 你自己讀一次 `git diff <起點>...HEAD`。零 token，但要自己看完 X 行。
-  2. 只跑 Standards 軸 —— 抓重複邏輯、命名不一致、變更散落等跨 commit 的結構問題。
-  3. 兩軸都跑 —— 另加 Spec 軸，核對交付內容與 ticket 要求是否相符。
-
-  驗收條件已於上一步逐條核對過，Spec 軸的邊際價值因此偏低；
-  跨 commit 的結構問題則是逐條核對看不到的，那是 Standards 軸的守備範圍。
-```
-
-### 使用者選擇執行時的瘦身參數
-
-原生 `/code-review` 在實測中花掉 **174,646 token**（Standards agent 75,060 + Spec agent 99,586），其中很大一塊是可省的重複工：兩個 sub-agent 各自冷啟動，各自把 `spec.md`(19KB) + `engineering-spec.md`(33KB) + 完整 diff + 一批原始碼重讀一遍——同一份 52KB 的中文規格，那一輪被讀了三次。
-
-調用 `/code-review` 時，在給它的指示中明確加上：
-
-- **Spec 軸的來源用 ticket 檔案，不要用 `spec.md` / `engineering-spec.md`。** ticket 本來就是從規格拆出來的驗收基準，這正是它存在的意義。sub-agent 真的需要回溯原始規格時再去讀。
-- **把 `token-discipline.md` 的三條防呆一併傳給 sub-agent**，避免它們重蹈 grep 壓縮檔、`sed -i` 整檔回吐、為 40 行讀 389 行的覆轍。
-- **使用者只選 Standards 軸時，明確要求不要啟動 Spec sub-agent。**
-- 固定點用本次 ticket 開始前的 commit，不要用整條 branch 的起點——diff 越小，兩個 agent 各付一次的那份就越小。
+**回報完就停。** 不追問下一步、不提 code-review、不建議任何後續審查動作。
 
 ## 暫停與回報
 

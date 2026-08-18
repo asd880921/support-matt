@@ -23,7 +23,7 @@
 | `setup-matt-preset` | 以個人慣例初始化 Matt skills 的 per-repo 設定：local issue tracker（GitLab 只讀不寫）、產物一律放 `.ai/`、`CLAUDE.md` 改以 `@` 匯入。取代直接調用 `setup-matt-pocock-skills`。 |
 | `to-engineering-spec` | 在 `to-spec` 與 `to-tickets` 之間，建立並維護一份正式的開發規格文件 `engineering-spec.md`（系統分析 + 技術設計 + 實作約束）。 |
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
-| `implement-oneshot` | 取代 `implement`（**一路做完**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾**詢問**是否跑 `code-review`（附瘦身參數）。 |
+| `implement-oneshot` | 取代 `implement`（**一路做完**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾（測試 + 逐條核對驗收條件 + 寫回 ticket）做完即結束，**不跑也不引導 `code-review`**。 |
 | `implement-checkpoint` | `implement-oneshot` 的變體（**即時插手**）：核心完全相同，只差每個 commit 送出前停下，附完整 commit message 與變更清單等你過目；回「繼續」才提交並接著做下一個 commit。不預先產 commit checklist。 |
 | `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
 | `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、`engineering-spec.md` 修訂與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
@@ -47,7 +47,7 @@ grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-ti
 代審他人 MR：[to-code-review]（模式 B），與上面的 pipeline 無關
 ```
 
-兩個 implement 取代 Matt 的 `implement`，內部都調用其 `tdd`，都不會自動執行 `code-review`，開場也都會先評估 ticket 規模、過重時建議你回 `to-tickets` 拆小。差別只有一個——你想不想在 commit 送出前插手：
+兩個 implement 取代 Matt 的 `implement`，內部都調用其 `tdd`，開場都會先評估 ticket 規模、過重時建議你回 `to-tickets` 拆小，收尾做完就結束——**兩支都不跑也不引導 `code-review`**，審查統一留到整條 branch 完成後的 `to-code-review`。差別只有一個——你想不想在 commit 送出前插手：
 
 | | commit 送出前停 | 事前產出 commit 規劃 | 適用 |
 | --- | --- | --- | --- |
