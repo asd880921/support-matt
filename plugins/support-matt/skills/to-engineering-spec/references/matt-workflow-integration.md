@@ -38,7 +38,7 @@ Matt Spec 已經寫了 user stories、Out of Scope、Testing Decisions。本文�
 | --- | --- |
 | 功能要達成什麼 | 一句話帶過 + `見 [spec.md](./spec.md) 的 Problem Statement / Solution` |
 | 使用情境清單 | 不重寫 user stories。需要指涉某條時寫 `見 spec.md User Story 12：審核者可退回申請單` |
-| 不做什麼 | 「二、範圍與非範圍」只寫**系統邊界**（哪個模組不動、哪張表不碰）；產品層級的 Out of Scope 引用 Matt Spec |
+| 不做什麼 | 「範圍與非範圍」只寫**系統邊界**（哪個模組不動、哪張表不碰）；產品層級的 Out of Scope 引用 Matt Spec |
 | 測試在哪個 seam | Matt Spec 的 Testing Decisions 已定案時引用它；未定案時本文件以「實作方向」提出 |
 | 驗收基準 | **本文件的「驗證條件」章是權威**，但只寫「怎麼驗證 Matt Spec 那條需求成立」，每條指回 user story、BR 或設計章節。不重寫 user stories、不擴充也不縮減範圍 |
 
