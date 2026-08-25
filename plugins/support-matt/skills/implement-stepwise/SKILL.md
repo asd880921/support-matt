@@ -1,6 +1,6 @@
 ---
 name: implement-stepwise
-description: 在單一 session 內把一整張 ticket 做完，核心與 implement-oneshot 完全一致（開場規模評估、一次確認全部 seam、TDD、收尾寫回 ticket、收尾後不跑也不引導 code-review），只差一件事：每個 commit 送出之前停下來，附上完整的 commit message 與變更清單等使用者過目，使用者回「繼續」才由本 skill 執行 git commit 並接著做下一個 commit，直到下一個 commit 前再停。不預先產出 commit checklist，也不把切分寫回 ticket——使用者不需要提前知道每個 commit 要幹嘛，只需要在送出前有機會插手。適合邊界明確、預估 commit 三個以內的較小 ticket。當使用者要一次做完一張小票、但希望每個 commit 送出前都能看一眼、必要時即時調整時使用。
+description: 在單一 session 內把一整張 ticket 做完，核心與 implement-oneshot 完全一致（開場規模評估、一次確認全部 seam、TDD、收尾寫回 ticket、收尾後不跑也不引導 code-review），只差一件事：每個 commit 送出之前停下來，附上完整的 commit message 與變更清單等使用者過目，使用者回「繼續」才由本 skill 執行 git commit 並接著做下一個 commit，直到下一個 commit 前再停。不預先產出 commit checklist，也不把切分寫回 ticket——使用者不需要提前知道每個 commit 要幹嘛，只需要在送出前有機會插手。適合邊界明確、預估 commit 三個以內的較小 ticket。當使用者要在單一 session 內做完一張小票、但希望每個 commit 送出前都能看一眼、必要時即時調整時使用。
 ---
 
 # implement-stepwise
@@ -54,7 +54,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 
 ## 1. 規模評估（不得跳過）
 
-讀完 ticket 後，先評估它適不適合一次做完，再決定是否繼續。
+讀完 ticket 後，先評估它適不適合在單一 session 內做完，再決定是否繼續。
 
 **出現下列任一情況，停下來建議使用者回 `to-tickets` 把票拆小：**
 
@@ -69,8 +69,8 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 規模評估：這張 ticket 有 19 條驗收條件，預估 5 個 commit，
 需修改的既有檔案合計約 218KB（含 55KB 的測試檔與 49KB 的 Service）。
 
-超過一次做完的建議上限。建議回 to-tickets 拆成 2–3 張。
-要繼續一次做完嗎？
+超過單一 session 做完的建議上限。建議回 to-tickets 拆成 2–3 張。
+要繼續在這個 session 內做完嗎？（每個 commit 送出前仍會停下讓你過目）
 ```
 
 **使用者堅持繼續時就照做**，不要反覆勸阻——但要在回報中留下這筆評估，日後對照成本時用得上。

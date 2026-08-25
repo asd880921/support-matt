@@ -1,5 +1,5 @@
 interface:
   display_name: "Implement Stepwise"
-  short_description: "一次做完一張小票，每個 commit 送出前停下讓你過目"
+  short_description: "在單一 session 內做完一張小票，每個 commit 送出前停下讓你過目"
 policy:
   allow_implicit_invocation: false
