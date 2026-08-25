@@ -7,19 +7,20 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 在**單一 session** 內把一整張 ticket 做完，收尾完就結束。
 
-本 skill 與 `implement-stepwise` 是同一套流程的兩種模式，共用實作規範，差別只在 commit 的送出方式：
+本 skill 與 `implement-stepwise` 是同一套流程的兩種模式，共用實作規範，差別在 commit 的送出方式與規模上限：
 
 | | `implement-oneshot` | `implement-stepwise` |
 | --- | --- | --- |
 | 執行單位 | 一整張 ticket | 一整張 ticket |
 | 人工關卡 | ticket 完成後一次 | 每個 commit 送出前 |
 | commit 送出方式 | 自動提交 | 確認後才提交 |
+| 規模上限 | 12 條驗收 / 3 commit / 100KB | 18 條驗收 / 5 commit / 150KB |
 | context | 一路到底 | 一路到底 |
 | `/code-review` | 不執行、不引導 | 不執行、不引導 |
 
 **與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`。本 skill 把那一步整段拿掉——收尾已經對本次 task 做過一輪驗收，單張票再跑一次審查是重複工；審查的位置在整條 branch 做完之後的 `to-code-review`。真的要對單一 task 跑審查時，改調用 Matt 原生的 `implement`。
 
-想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-stepwise`——核心與本 skill 完全相同，只把 commit 從自動送出改成確認後送出。
+想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-stepwise`——核心與本 skill 相同，只把 commit 從自動送出改成確認後送出；因為多了這道關卡，它的規模上限也比本 skill 寬一級。票超出本 skill 的上限、但還在 stepwise 上限內時，優先改用 `implement-stepwise`，不必急著回 `to-tickets` 拆票。
 
 ## 核心行為規範（最高優先，調用時必須遵守）
 
