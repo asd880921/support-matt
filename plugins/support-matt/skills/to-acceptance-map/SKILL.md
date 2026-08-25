@@ -27,7 +27,7 @@ description: 整條 branch 開發完畢、規格文件收斂完成後（`issue-d
 
 ## 為什麼要獨立執行
 
-`implement-checkpoint` / `implement-oneshot` 在每個 commit 完成時會記錄「本次寫了哪些測試、涵蓋哪幾條驗收條件」。**那份記錄是實作者的自我聲明，不是證據。**
+`implement-stepwise` / `implement-oneshot` 在每個 commit 完成時會記錄「本次寫了哪些測試、涵蓋哪幾條驗收條件」。**那份記錄是實作者的自我聲明，不是證據。**
 
 本 skill 的價值來自獨立性：在**乾淨的新 session** 執行，不帶開發過程的 context，逐項自行確認測試確實存在、且真的涵蓋該項目。
 
@@ -251,6 +251,6 @@ description: 整條 branch 開發完畢、規格文件收斂完成後（`issue-d
 
 ## 下一步引導（純提示，不主動調用）
 
-- **有需補測試或覆蓋不足** → 提示使用者可回到 `implement-checkpoint` / `implement-oneshot` 補測試；補完後重跑本 skill。
+- **有需補測試或覆蓋不足** → 提示使用者可回到 `implement-stepwise` / `implement-oneshot` 補測試；補完後重跑本 skill。
 - **有可能已失效的測試** → 交由使用者判斷刪、改或留，本 skill 不動它。
 - **全部收斂** → 提示使用者可回 `to-issue-doc` 以修訂模式，依本檔案逐條補上驗證條件的「驗證結果」欄，再與本檔案一起貼上主 Issue。（重案流程改回 `to-engineering-spec` 修訂，並以 `engineering-spec-deliverable` 產交付版。）

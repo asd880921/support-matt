@@ -119,7 +119,7 @@ description: 開發中途發現需要改動時的再入點：接在 grill 之後
 $implement-stepwise 依 .ai/.scratch/<feature-slug>/issues/<NN>-<slug>.md
 ```
 
-輕票則給 `$implement-oneshot`。**本 skill 不自行調用任何 implement skill。**
+不需要逐 commit 過目時則給 `$implement-oneshot`。**本 skill 不自行調用任何 implement skill。**
 
 ## `spec.md` 的編輯授權
 

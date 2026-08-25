@@ -1,5 +1,5 @@
 interface:
   display_name: "Implement Stepwise"
-  short_description: "逐 commit 人工審查的 ticket 實作流程"
+  short_description: "一次做完一張小票，每個 commit 送出前停下讓你過目"
 policy:
   allow_implicit_invocation: false

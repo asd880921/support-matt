@@ -7,19 +7,19 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 在**單一 session** 內把一整張 ticket 做完，收尾完就結束。
 
-本 skill 與 `implement-stepwise` 是同一套流程的兩種模式，共用實作規範，差別只在停下來的頻率：
+本 skill 與 `implement-stepwise` 是同一套流程的兩種模式，共用實作規範，差別只在 commit 的送出方式：
 
 | | `implement-oneshot` | `implement-stepwise` |
 | --- | --- | --- |
-| 執行單位 | 一整張 ticket | 一個 commit |
-| 人工關卡 | ticket 完成後一次 | 每個 commit 之前 |
-| 適合的 ticket | 邊界明確、預估 commit ≤ 3 | 驗收條件多、預估 commit ≥ 3 |
-| context | 一路到底 | 每個 commit 之間，由使用者決定要不要清 |
-| `/code-review` | 不執行、不引導 | 不主動，由使用者自行決定 |
+| 執行單位 | 一整張 ticket | 一整張 ticket |
+| 人工關卡 | ticket 完成後一次 | 每個 commit 送出前 |
+| commit 送出方式 | 自動提交 | 確認後才提交 |
+| context | 一路到底 | 一路到底 |
+| `/code-review` | 不執行、不引導 | 不執行、不引導 |
 
 **與 Matt 原生 `implement` 的差異**：原生會在做完之後**直接執行** `/code-review`。本 skill 把那一步整段拿掉——收尾已經對本次 task 做過一輪驗收，單張票再跑一次審查是重複工；審查的位置在整條 branch 做完之後的 `to-code-review`。真的要對單一 task 跑審查時，改調用 Matt 原生的 `implement`。
 
-想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-checkpoint`——核心與本 skill 完全相同，只把 commit 從自動送出改成確認後送出。
+想保留本 skill 的節奏、但每個 commit 送出前要看一眼的，用 `implement-stepwise`——核心與本 skill 完全相同，只把 commit 從自動送出改成確認後送出。
 
 ## 核心行為規範（最高優先，調用時必須遵守）
 
@@ -32,7 +32,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 動手前先讀這兩份，位於 plugin 的 `references/` 目錄（相對本 skill 為 `../../references/`）：
 
-- **`token-discipline.md`** —— 探索優先序（圖譜優先）、三條防呆、回合數成本。**本 skill 一路不清 context，這份的重要性比在 `implement-stepwise` 更高**：一次錯誤的讀取會跟著整張 ticket 的每一個回合重送。
+- **`token-discipline.md`** —— 探索優先序（圖譜優先）、三條防呆、回合數成本。**本 skill 一路不清 context**：一次錯誤的讀取會跟著整張 ticket 的每一個回合重送。
 - **`implementation-rules.md`** —— TDD 三條覆寫、程式碼與註解規範、commit 格式、邊做邊記。
 
 其中 **TDD 覆寫 1（seam 只確認一次）** 在本流程的落點是：**規模評估之後、動手之前**一次列出全部 seam 並取得確認，之後不再逐一重問。
@@ -51,7 +51,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 讀完 ticket 後，先評估它適不適合一次做完，再決定是否繼續。
 
-**出現下列任一情況，停下來建議使用者改走 `implement-stepwise`，或回 `to-tickets` 把票拆小：**
+**出現下列任一情況，停下來建議使用者回 `to-tickets` 把票拆小：**
 
 - 驗收條件**超過 12 條**。
 - 預估需要**超過 3 個 commit**。
@@ -64,7 +64,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 規模評估：這張 ticket 有 19 條驗收條件，預估 5 個 commit，
 需修改的既有檔案合計約 218KB（含 55KB 的測試檔與 49KB 的 Service）。
 
-超過一次做完的建議上限。建議改用 implement-stepwise，或回 to-tickets 拆成 2–3 張。
+超過一次做完的建議上限。建議回 to-tickets 拆成 2–3 張。
 要繼續一次做完嗎？
 ```
 
@@ -79,7 +79,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 3. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
 4. 確認後直接往下實作，**不再逐 commit 徵詢**。
 
-**commit 切分**不寫回 ticket 檔案。本 skill 一路做完，不需要跨 session 的進度狀態；ticket 的 `## Commit checklist` 章節是 `implement-stepwise` 的機制，兩者不混用。（收尾階段的驗收核對結果仍要寫回 ticket，見第 4 節。）
+**commit 切分**不寫回 ticket 檔案。本 skill 一路做完，不需要跨 session 的進度狀態。（收尾階段的驗收核對結果仍要寫回 ticket，見第 4 節。）
 
 ## 3. 實作
 
@@ -94,7 +94,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 5——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
 
-**寫回 ticket 對本 skill 特別重要。** 它不像 `implement-stepwise` 會在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
+**寫回 ticket 對本 skill 特別重要。** 核對結果若只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
 
 回報時一併列出全部 commit 清單。
 
@@ -107,7 +107,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 - ticket 與實際程式碼不一致，無法照描述實作。
 - 實作過程中發現 ticket 的驗收條件本身有矛盾或無法判定。
 - 需要大範圍重構才能繼續。
-- 實際規模明顯超出開場的評估（例如原估 3 個 commit，做到一半發現要 6 個）——這時應主動提出：是否轉為 `implement-stepwise` 接手剩餘部分。
+- 實際規模明顯超出開場的評估（例如原估 3 個 commit，做到一半發現要 6 個）——這時應主動提出：是否回 `to-tickets` 把剩餘的部分拆成獨立的票。
 
 ticket 的驗收條件有誤時，建議使用者回到 `to-tickets` 修正，不要自行改寫 ticket。
 
@@ -115,4 +115,4 @@ ticket 的驗收條件有誤時，建議使用者回到 `to-tickets` 修正，�
 
 - **ticket 完成** → 提示清空 context，取下一張 blocker 已滿足的 ticket。
 - **整條 branch 的 ticket 全部完成** → 提示開新 session 執行 `to-acceptance-map` 做獨立的驗收覆蓋盤點。
-- **中途發現票太重** → 提示改用 `implement-stepwise`，或回 `to-tickets` 拆小。
+- **中途發現票太重** → 提示回 `to-tickets` 拆小。
