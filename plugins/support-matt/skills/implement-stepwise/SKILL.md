@@ -1,13 +1,13 @@
 ---
 name: implement-stepwise
-description: 在單一 session 內把一整張 ticket 做完，核心與 implement-oneshot 完全一致（開場規模評估、一次確認全部 seam、TDD、收尾寫回 ticket、收尾後不跑也不引導 code-review），只差一件事：每個 commit 送出之前停下來，附上完整的 commit message 與變更清單等使用者過目，使用者回「繼續」才由本 skill 執行 git commit 並接著做下一個 commit，直到下一個 commit 前再停。不預先產出 commit checklist，也不把切分寫回 ticket——使用者不需要提前知道每個 commit 要幹嘛，只需要在送出前有機會插手。適合邊界明確、預估 commit 三個以內的較小 ticket。當使用者要在單一 session 內做完一張小票、但希望每個 commit 送出前都能看一眼、必要時即時調整時使用。
+description: 在單一 session 內把一整張 ticket 做完，核心與 implement-oneshot 完全一致（開場規模評估、一次確認全部 seam、TDD、收尾寫回 ticket、收尾後不跑也不引導 code-review），只差兩件事：規模評估的上限比 oneshot 寬（因為有 commit 關卡兜底），以及每個 commit 送出之前停下來，附上完整的 commit message 與變更清單等使用者過目，使用者回「繼續」才由本 skill 執行 git commit 並接著做下一個 commit，直到下一個 commit 前再停。不預先產出 commit checklist，也不把切分寫回 ticket——使用者不需要提前知道每個 commit 要幹嘛，只需要在送出前有機會插手。適合邊界明確、預估 commit 五個以內的 ticket。當使用者要在單一 session 內做完一張小票、但希望每個 commit 送出前都能看一眼、必要時即時調整時使用。
 ---
 
 # implement-stepwise
 
 在**單一 session** 內把一整張 ticket 做完，但**每個 commit 送出之前停下來讓人過目**，使用者回「繼續」才提交並接續下一個 commit。
 
-本 skill 是 `implement-oneshot` 的變體：**核心流程、規範、收尾全部相同**，唯一的差別是 commit 的送出方式從「自動」改成「先停下、確認後才送」。
+本 skill 是 `implement-oneshot` 的變體：**核心流程、規範、收尾全部相同**，差別是 commit 的送出方式從「自動」改成「先停下、確認後才送」；因為有這道關卡兜底，規模評估的上限也比 oneshot 寬一級。
 
 兩者的關係：
 
@@ -16,6 +16,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 | 執行單位 | 一整張 ticket | 一整張 ticket |
 | 人工關卡 | ticket 完成後一次 | 每個 commit 送出前 |
 | commit 送出方式 | 自動提交 | 確認後才提交 |
+| 規模上限 | 12 條驗收 / 3 commit / 100KB | 18 條驗收 / 5 commit / 150KB |
 | 事前知道每個 commit 要做什麼 | 否 | 否 |
 | context | 一路到底 | 一路到底 |
 | `/code-review` | 不執行、不引導 | 不執行、不引導 |
@@ -27,7 +28,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 ## 核心行為規範（最高優先，調用時必須遵守）
 
 - **開場必須先做規模評估**，未評估不得開始實作。
-- **任何情況下都不得直接 `git commit`。** 每個 commit 都必須先停下回報並取得使用者確認。這是本 skill 與 `implement-oneshot` 的唯一差異，也是它存在的理由——違反這條，本 skill 就等同 `implement-oneshot`。
+- **任何情況下都不得直接 `git commit`。** 每個 commit 都必須先停下回報並取得使用者確認。這是本 skill 與 `implement-oneshot` 最關鍵的差異，也是它存在的理由——違反這條，本 skill 就等同 `implement-oneshot`。
 - **使用者確認後不再多問。** 執行 commit，直接接續實作下一個 commit，做到下一個 commit 送出前再停。**不在 commit 之後另外徵詢要不要繼續。**
 - **不產出 commit checklist、不寫進度狀態回 ticket。** 使用者不需要提前知道每個 commit 要幹嘛，只需要在送出前有機會插手。（收尾的驗收核對結果仍要寫回 ticket，見第 5 節。）
 - **不執行 `/code-review`，也不詢問、不提示、不列選項。** 收尾結束就是本 skill 的終點；commit 關卡拿到的「繼續」更不構成執行審查的授權。
@@ -56,17 +57,19 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 
 讀完 ticket 後，先評估它適不適合在單一 session 內做完，再決定是否繼續。
 
+本 skill 的上限比 `implement-oneshot` 寬：每個 commit 前都有關卡，跑歪或誤解需求當場就會被攔下，不會整張票做完才發現。但上限仍然存在——單一 session 一路不清 context，工作量堆過頭時品質會掉，那是關卡攔不住的。
+
 **出現下列任一情況，停下來建議使用者回 `to-tickets` 把票拆小：**
 
-- 驗收條件**超過 12 條**。
-- 預估需要**超過 3 個 commit**。
-- 預估要修改的**既有**檔案，體積合計超過約 100KB（新建檔案不計——寫新檔遠比讀既有大檔便宜）。
-- 需要動到跨越三個以上模組或專案的結構。
+- 驗收條件**超過 18 條**。
+- 預估需要**超過 5 個 commit**。
+- 預估要修改的**既有**檔案，體積合計超過約 150KB（新建檔案不計——寫新檔遠比讀既有大檔便宜）。
+- 需要動到跨越四個以上模組或專案的結構。
 
 評估結果與依據要明講，例如：
 
 ```text
-規模評估：這張 ticket 有 19 條驗收條件，預估 5 個 commit，
+規模評估：這張 ticket 有 21 條驗收條件，預估 8 個 commit，
 需修改的既有檔案合計約 218KB（含 55KB 的測試檔與 49KB 的 Service）。
 
 超過單一 session 做完的建議上限。建議回 to-tickets 拆成 2–3 張。
@@ -165,7 +168,7 @@ feat: 新增 X 的查詢路徑
 - ticket 與實際程式碼不一致，無法照描述實作。
 - 實作過程中發現 ticket 的驗收條件本身有矛盾或無法判定。
 - 需要大範圍重構才能繼續。
-- 實際規模明顯超出開場的評估（例如原估 3 個 commit，做到一半發現要 6 個）——這時應主動提出：是否回 `to-tickets` 把剩餘的部分拆成獨立的票。
+- 實際規模明顯超出開場的評估（例如原估 5 個 commit，做到一半發現要 9 個）——這時應主動提出：是否回 `to-tickets` 把剩餘的部分拆成獨立的票。
 
 ticket 的驗收條件有誤時，建議使用者回到 `to-tickets` 修正，不要自行改寫 ticket。
 
