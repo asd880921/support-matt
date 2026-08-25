@@ -3,7 +3,7 @@
 套件版本：`v0.15.1`
 更新時間：2026-08-25
 安裝教程：[INSTALL.md](./INSTALL.md)
-<!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json，發版時一併更新此處版本與日期 -->
+<!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json 與 .codex-plugin/plugin.json，發版時三處版本與此處日期一併更新 -->
 
 ---
 
