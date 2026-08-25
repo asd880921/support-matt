@@ -21,12 +21,13 @@
 | Skill | 用途 |
 | --- | --- |
 | `setup-matt-preset` | 以個人慣例初始化 Matt skills 的 per-repo 設定：local issue tracker（GitLab 只讀不寫）、產物一律放 `.ai/`、`CLAUDE.md` 改以 `@` 匯入。取代直接調用 `setup-matt-pocock-skills`。 |
-| `to-engineering-spec` | 在 `to-spec` 與 `to-tickets` 之間，建立並維護一份正式的開發規格文件 `engineering-spec.md`（系統分析 + 技術設計 + 實作約束）。 |
+| `to-issue-doc` | 貼上主 Issue 的 `issue-doc.md`，**分兩個時點寫**：拆票前的 brief 只寫「約束」——目標與範圍、方案輪廓、關鍵決策、驗證條件 `VC-xx`、風險（不先定版，這些決策會發生在拆票裡而沒有紀錄），只有 VC 那張表要逐條確認；系統分析、資料模型、介面與流程屬於「紀錄」，留到 branch 做完跑 `final`，由既成事實（程式碼、ticket 核對表、`git diff`）補齊。開發中途就地修訂。 |
+| `to-engineering-spec` | 同一種文件，但**動工前一次寫到位**：系統分析、技術設計、實作約束都在拆票前定版、經審查後才動手。差別不在誰的規則比較嚴，而在設計要不要先成為「被遵守的約束」——動角色權限、動 schema 牽動交易邊界、改變既有架構假設，或公司要求動工前提交完整設計時，事後補寫就來不及了。 |
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
 | `implement-oneshot` | 取代 `implement`（**一路做完**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾（測試 + 逐條核對驗收條件 + 寫回 ticket）做完即結束，**不跑也不引導 `code-review`**。 |
 | `implement-stepwise` | `implement-oneshot` 的變體（**即時插手**）：核心完全相同，只差每個 commit 送出前停下，附完整 commit message 與變更清單等你過目；回「繼續」才提交並接著做下一個 commit。不預先產 commit checklist。 |
-| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
-| `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、`engineering-spec.md` 修訂與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
+| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。驗證基準只認規格文件的 `VC-xx`，不拿 ticket 充數。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
+| `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、規格文件修訂（委派給該 feature 實際用的 `to-issue-doc` 或 `to-engineering-spec`）與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
 | `to-code-review` | Matt `code-review` 的**上層入口**：自家 branch 只需給目標分支，規格由 feature 目錄自動取得、`REVIEW.md` 寫回該目錄；代審他人 MR 則另外要背景說明，寫到 `.ai/code-review/`。兩軸結果一律過證據門檻後才輸出 P0–P3 findings。 |
 
 掛載位置：
@@ -34,16 +35,22 @@
 ```
 [setup-matt-preset]  ← 每個 repo 第一次使用前跑一次
 
-grill-with-docs → to-spec → [to-engineering-spec] → 人工確認 → to-tickets ─┐
-                                                 └─ [engineering-spec-deliverable] 隨時可跑
+grill-with-docs → to-spec ─┬─ 設計後補　 → [to-issue-doc brief] → VC 逐條確認 ──┬─→ to-tickets
+                           │                                                   │
+                           └─ 設計先定版 → [to-engineering-spec] → 人工確認 ────┘
+                                          └─ [engineering-spec-deliverable] 隨時可跑
                                                                           ↓
         單張 ticket 一次做完 → [implement-oneshot]  /  每個 commit 送出前停 → [implement-stepwise]
                                                                           ↓
-                          [to-engineering-spec 定稿] ← [to-acceptance-map]（branch 完成後，新 session）
+                                                              整條 branch 的 ticket 全部完成（以下開新 session）
+                                                                          ↓
+        設計後補　：[to-issue-doc final]（補齊交付內容）→ [to-acceptance-map] ─┐
+        設計先定版：[to-acceptance-map] → [to-engineering-spec 定稿] ──────────┤
                                                                           ↓
                                                               [to-code-review]（發 MR 前最後一關，自行 Code Review 驗證）
 
 開發中途要改：grill-me / grill-with-docs → [to-change-request] → implement (oneshot / stepwise)
+              （文件同步由 to-change-request 委派給這個 feature 實際用的那一份：to-issue-doc 或 to-engineering-spec 的修訂模式）
 代審他人 MR：[to-code-review]（模式 B），與上面的 pipeline 無關
 ```
 
