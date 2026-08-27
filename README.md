@@ -1,7 +1,7 @@
 # support-matt
 
-套件版本：`v0.15.3`
-更新時間：2026-08-26
+套件版本：`v0.16.0`
+更新時間：2026-08-27
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json 與 .codex-plugin/plugin.json，發版時三處版本與此處日期一併更新 -->
 
@@ -26,7 +26,7 @@
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
 | `implement-oneshot` | 取代 `implement`（**一路做完**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾（測試 + 逐條核對驗收條件 + 寫回 ticket）做完即結束，**不跑也不引導 `code-review`**。 |
 | `implement-stepwise` | `implement-oneshot` 的變體（**即時插手**）：核心完全相同，只差每個 commit 送出前停下，附完整 commit message 與變更清單等你過目；回「繼續」才提交並接著做下一個 commit。不預先產 commit checklist。 |
-| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。驗證基準只認規格文件的 `VC-xx`，不拿 ticket 充數。四級判定區分「需補測試」與「不適用測試」，回報只呈現例外。全程唯讀。 |
+| `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。驗證基準只認規格文件的 `VC-xx`，不拿 ticket 充數。四級判定區分「需補測試」與「不適用測試」，另檢出可能已失效的測試與潛在重複覆蓋（只偵測、不動測試）。回報只呈現例外，全程唯讀。 |
 | `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、規格文件修訂（委派給該 feature 實際用的 `to-issue-doc` 或 `to-engineering-spec`）與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
 | `to-code-review` | Matt `code-review` 的**上層入口**：自家 branch 只需給目標分支，規格由 feature 目錄自動取得、`REVIEW.md` 寫回該目錄；代審他人 MR 則另外要背景說明，寫到 `.ai/code-review/`。兩軸結果一律過證據門檻後才輸出 P0–P3 findings。 |
 
@@ -66,7 +66,9 @@ grill-with-docs → to-spec ─┬─ 設計後補　 → [to-issue-doc brief] �
 | Reference | 內容 |
 | --- | --- |
 | `token-discipline.md` | 探索優先序（圖譜優先）、三條防呆、回合數成本 |
-| `implementation-rules.md` | TDD 三條覆寫、程式碼與註解規範、commit 格式、邊做邊記 |
+| `implementation-rules.md` | TDD 三條覆寫、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記 |
+
+其中 **Test Consolidation** 是為了壓住 TDD 的測試膨脹：GREEN 之後、commit 之前檢視本次新增或修改的測試，把只為取得 RED/GREEN 回饋而生的暫時性測試、重複的 observable behavior 覆蓋、可參數化的同質 cases，以及沒有保護不同風險的跨層級重複併掉或刪掉，讓每個 commit 直接帶進值得長期保留的那一份，**不留 `test: remove redundant tests` 這種收尾 commit**。驗收條件與測試**不要求 1:1**，要成立的是覆蓋的可追溯性。跨 ticket 才浮現的重複由 `to-acceptance-map` 偵測回報，屬於例外的 branch 層 cleanup。
 
 ## 待補
 

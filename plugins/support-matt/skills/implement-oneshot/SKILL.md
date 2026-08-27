@@ -34,7 +34,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 動手前先讀這兩份，位於 plugin 的 `references/` 目錄（相對本 skill 為 `../../references/`）：
 
 - **`token-discipline.md`** —— 探索優先序（圖譜優先）、三條防呆、回合數成本。**本 skill 一路不清 context**：一次錯誤的讀取會跟著整張 ticket 的每一個回合重送。
-- **`implementation-rules.md`** —— TDD 三條覆寫、程式碼與註解規範、commit 格式、邊做邊記。
+- **`implementation-rules.md`** —— TDD 三條覆寫、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記。
 
 其中 **TDD 覆寫 1（seam 只確認一次）** 在本流程的落點是：**規模評估之後、動手之前**一次列出全部 seam 並取得確認，之後不再逐一重問。
 
@@ -87,12 +87,13 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 依 `implementation-rules.md` 的 TDD 規範，逐個 commit 完成：
 
 - 每個 commit 走完整的紅綠循環，測試與實作同屬一個 commit。
+- **GREEN 與重構完成後、`git commit` 之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試，把只為驅動 TDD 而生的暫時性測試併掉或刪掉，讓這個 commit 只帶進值得長期保留的測試。**不得另開 cleanup commit 補做。**
 - 每個 commit 完成後**直接 `git commit`**，不徵詢——這是本 skill 與 `implement-stepwise` 的核心差異。
 - **定期執行 typecheck，並跑與當下變更相關的測試**；不要累積到最後才一次驗證。範圍依測試性質分流：
   - **不寫外部狀態的測試（純單元測試）** —— 整個測試檔跑完。沒有副作用，順帶擋住同檔既有測試的回歸。
   - **會寫 DB、檔案等外部狀態的測試（整合測試、UI 測試）** —— 只跑本次新增或修改的測試方法。整檔逐 commit 重複跑會反覆寫入測試資料，同檔其餘測試留給收尾那一輪的測試專案全跑。
   - **分流依你手上已有的資訊判定，不另外開調查。** 依據是本次寫測試時已經看過的東西（測試檔的 arrange 段、繼承的 base class、用的是替身還是真實 DbContext）。**不要為了判定去追 base class、fixture、DI 註冊或設定檔**——那條相依鏈讀下去的成本遠超過它省的測試時間。判斷不出來就當作會寫外部狀態，只跑本次新增的。
-- 每個 commit 完成時，依「邊做邊記」記下本次測試與涵蓋的驗收條件，收尾時併入寫回 ticket 的核對表與最終回報。
+- 每個 commit 完成時，依「邊做邊記」記下本次**留下來**的測試與涵蓋的驗收條件，以及該次 consolidation 刪／併了什麼、該行為現在由誰守；收尾時併入最終回報，並依「寫回 ticket」在核對表後補一行 consolidation 摘要。**本 skill 自動提交，使用者看不到過程**——consolidation 若沒寫進回報，就等於靜默刪測試。
 
 ## 4. 收尾
 

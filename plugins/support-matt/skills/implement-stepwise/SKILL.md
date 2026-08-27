@@ -39,7 +39,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 動手前先讀這兩份，位於 plugin 的 `references/` 目錄（相對本 skill 為 `../../references/`）：
 
 - **`token-discipline.md`** —— 探索優先序（圖譜優先）、三條防呆、回合數成本。**本 skill 一路不清 context**：一次錯誤的讀取會跟著整張 ticket 的每一個回合重送。
-- **`implementation-rules.md`** —— TDD 三條覆寫、程式碼與註解規範、commit 格式、邊做邊記。
+- **`implementation-rules.md`** —— TDD 三條覆寫、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記。
 
 其中 **TDD 覆寫 1（seam 只確認一次）** 在本流程的落點是：**規模評估之後、動手之前**一次列出全部 seam 並取得確認，之後不再逐一重問。**commit 關卡不是重問 seam 的地方**——那裡只審這次要提交的東西。
 
@@ -98,11 +98,12 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
   - **不寫外部狀態的測試（純單元測試）** —— 整個測試檔跑完。沒有副作用，順帶擋住同檔既有測試的回歸。
   - **會寫 DB、檔案等外部狀態的測試（整合測試、UI 測試）** —— 只跑本次新增或修改的測試方法。整檔逐 commit 重複跑會反覆寫入測試資料，同檔其餘測試留給收尾那一輪的測試專案全跑。
   - **分流依你手上已有的資訊判定，不另外開調查。** 依據是本次寫測試時已經看過的東西（測試檔的 arrange 段、繼承的 base class、用的是替身還是真實 DbContext）。**不要為了判定去追 base class、fixture、DI 註冊或設定檔**——那條相依鏈讀下去的成本遠超過它省的測試時間。判斷不出來就當作會寫外部狀態，只跑本次新增的。
+- **GREEN 與重構完成後、走下一節的關卡之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試，把只為驅動 TDD 而生的暫時性測試併掉或刪掉，並重跑受影響的測試確認仍是綠的。使用者在關卡看到的，應該就是這個行為最終要留在 repo 裡的測試。**不得另開 cleanup commit 補做。**
 - 每個 commit 的變更就緒後，**不要 commit**，改走下一節的關卡。
 
 ## 4. commit 關卡（本 skill 的核心）
 
-每個 commit 的變更就緒、typecheck 與相關測試通過後，**停下來回報並等待使用者確認**。回報固定包含四項：
+每個 commit 的變更就緒、typecheck 與相關測試通過後，**停下來回報並等待使用者確認**。回報固定包含五項：
 
 ````md
 ### commit N/? 待確認
@@ -116,7 +117,11 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 typecheck 通過；`XxxTests` 全綠（新增 3 條）。
 
 **涵蓋的驗收條件**
-#3、#4
+#3、#4（一支測試可涵蓋多條，一條也可由多支共同保護）
+
+**Test Consolidation**
+刪掉為逼出 RED 而寫的 `某測試方法`，該行為已由 `另一測試方法` 的斷言涵蓋；三條同質 case 併為參數化。
+（本次沒有刪或併時寫「無」。）
 
 **commit message**
 ```
@@ -139,6 +144,7 @@ feat: 新增 X 的查詢路徑
 
 - **commit message 要給完整可直接使用的一整段**，格式依 `implementation-rules.md` 的 Commit 規範（type 前綴英文、描述繁中、有 issue 編號就帶）。不要只給摘要或口頭描述——使用者要能直接看出即將寫進 repo 的是哪一行字。
 - **「驗證」欄要寫明實際跑了什麼範圍。** 整檔跑完就寫「`XxxTests` 全綠（新增 3 條）」；依第 3 節分流只跑了本次新增的方法，就照實寫「`XxxTests` 只跑本次新增的 3 條，全綠；整檔留待收尾」。含糊寫成「測試通過」會讓使用者以為同檔既有測試也驗過了。
+- **「Test Consolidation」欄不得省略，也不得只寫「已整理」。** 刪或併了哪幾支、該行為現在由誰守，都要點名——這是使用者唯一能攔下誤刪的時機，寫得含糊等於靜默刪測試。沒刪沒併就寫「無」。
 - **`git add` 也一起等**。關卡之前不要動暫存區，避免使用者以為只是預覽卻已經動了 git 狀態。
 - **只在這裡設一個關卡。** 不要在實作中途、寫完測試、跑完 typecheck 等處另外停下來徵詢。
 - **不附上「要不要繼續」的選項題。** 使用者的答案只有兩種：確認（繼續）或提出調整。
@@ -157,7 +163,7 @@ feat: 新增 X 的查詢路徑
 
 依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 5——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**。
 
-**寫回 ticket 對本 skill 特別重要。** 它和 `implement-oneshot` 一樣不在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
+**寫回 ticket 對本 skill 特別重要。** 它和 `implement-oneshot` 一樣不在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明；本票有做 Test Consolidation 時，也依「寫回 ticket」在表格後補一行摘要——關卡上講過的刪／併只留在對話裡，ticket 上會看不出測試為什麼變少。
 
 收尾階段測試失敗或有驗收條件未達成時，**先回報，不要自己修掉**。使用者要修的話，那份修正也是一個 commit，照樣走第 4 節的關卡；把核對表寫回 ticket 的動作，等修正提交後再做，避免留下與程式碼不符的紀錄。
 
