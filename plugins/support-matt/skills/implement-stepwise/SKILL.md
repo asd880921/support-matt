@@ -163,7 +163,7 @@ feat: 新增 X 的查詢路徑
 
 依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 5——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**。
 
-**寫回 ticket 對本 skill 特別重要。** 它和 `implement-oneshot` 一樣不在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
+**寫回 ticket 對本 skill 特別重要。** 它和 `implement-oneshot` 一樣不在 ticket 留下 Commit checklist，若核對結果也只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明；本票有做 Test Consolidation 時，也依「寫回 ticket」在表格後補一行摘要——關卡上講過的刪／併只留在對話裡，ticket 上會看不出測試為什麼變少。
 
 收尾階段測試失敗或有驗收條件未達成時，**先回報，不要自己修掉**。使用者要修的話，那份修正也是一個 commit，照樣走第 4 節的關卡；把核對表寫回 ticket 的動作，等修正提交後再做，避免留下與程式碼不符的紀錄。
 
