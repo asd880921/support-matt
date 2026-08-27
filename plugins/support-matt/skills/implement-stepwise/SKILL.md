@@ -41,7 +41,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 - **`token-discipline.md`** —— 探索優先序（圖譜優先）、三條防呆、回合數成本。**本 skill 一路不清 context**：一次錯誤的讀取會跟著整張 ticket 的每一個回合重送。
 - **`implementation-rules.md`** —— TDD 三條覆寫、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記。
 
-其中 **TDD 覆寫 1（seam 只確認一次）** 在本流程的落點是：**規模評估之後、動手之前**一次列出全部 seam 並取得確認，之後不再逐一重問。**commit 關卡不是重問 seam 的地方**——那裡只審這次要提交的東西。
+其中 **TDD 覆寫 1（seam 只確認一次）** 在本流程的落點是：**規模評估之後、動手之前**一次列出全部 seam 並取得確認，之後不再逐一重問。**commit 關卡不是重問 seam 的地方**——那裡只審這次要提交的東西。但覆寫 1 另有一條：實作中發現 seam 判斷錯誤而**要擴大測試範圍時，當場停下說明並取得確認**，那是獨立於關卡的例外，不要憋到關卡才講——測試那時已經寫完了。
 
 ## 前置讀取
 
@@ -93,7 +93,7 @@ description: 在單一 session 內把一整張 ticket 做完，核心與 impleme
 
 依 `implementation-rules.md` 的 TDD 規範，逐個 commit 完成：
 
-- 每個 commit 走完整的紅綠循環，測試與實作同屬一個 commit。
+- **新增或改變 observable behavior 的 commit 走完整的紅綠循環**（是否走 TDD 不由你判斷）；**純 behavior-preserving refactor 走另一條路徑**——先確認既有測試涵蓋該行為且為綠，重構後重跑仍為綠，不得為了看到 RED 而硬生一支沒有新行為的測試。兩條路徑的細節見 `implementation-rules.md` 的 TDD 覆寫 2。測試與實作同屬一個 commit。
 - **定期執行 typecheck，並跑與當下變更相關的測試**；不要累積到最後才一次驗證。範圍依測試性質分流：
   - **不寫外部狀態的測試（純單元測試）** —— 整個測試檔跑完。沒有副作用，順帶擋住同檔既有測試的回歸。
   - **會寫 DB、檔案等外部狀態的測試（整合測試、UI 測試）** —— 只跑本次新增或修改的測試方法。整檔逐 commit 重複跑會反覆寫入測試資料，同檔其餘測試留給收尾那一輪的測試專案全跑。
