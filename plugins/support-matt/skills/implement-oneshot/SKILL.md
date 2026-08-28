@@ -77,8 +77,9 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 1. **探索 codebase 現況**，依 `token-discipline.md` 的優先序。
 2. 列出預計的 commit 切分，以及每個 commit 要測試的 **seam**。
-3. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
-4. 確認後直接往下實作，**不再逐 commit 徵詢**。
+3. **打算落在昂貴層（整合、UI／E2E）的 seam，逐個說出它為什麼不能放在便宜層**——依 `implementation-rules.md` 的「測試層級」入場規則，先拿它要斷言的旗標／欄位／規則名回便宜層的測試類別搜尋，再下判斷。這裡是修正層級最便宜的時點。
+4. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
+5. 確認後直接往下實作，**不再逐 commit 徵詢**。
 
 **commit 切分**不寫回 ticket 檔案。本 skill 一路做完，不需要跨 session 的進度狀態。（收尾階段的驗收核對結果仍要寫回 ticket，見第 4 節。）
 
