@@ -77,8 +77,9 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 1. **探索 codebase 現況**，依 `token-discipline.md` 的優先序。
 2. 列出預計的 commit 切分，以及每個 commit 要測試的 **seam**。
-3. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
-4. 確認後直接往下實作，**不再逐 commit 徵詢**。
+3. **打算落在昂貴層（整合、UI／E2E）的 seam，逐個說出它為什麼不能放在便宜層**——依 `implementation-rules.md` 的「測試層級」入場規則，先拿它要斷言的旗標／欄位／規則名回便宜層的測試類別搜尋，再下判斷。這裡是修正層級最便宜的時點。
+4. 給使用者確認一次——這同時滿足 `/tdd` 的「seam 必須事先確認」要求。
+5. 確認後直接往下實作，**不再逐 commit 徵詢**。
 
 **commit 切分**不寫回 ticket 檔案。本 skill 一路做完，不需要跨 session 的進度狀態。（收尾階段的驗收核對結果仍要寫回 ticket，見第 4 節。）
 
@@ -87,11 +88,11 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 依 `implementation-rules.md` 的 TDD 規範，逐個 commit 完成：
 
 - **新增或改變 observable behavior 的 commit 走完整的紅綠循環**（是否走 TDD 不由你判斷）；**純 behavior-preserving refactor 走另一條路徑**——先確認既有測試涵蓋該行為且為綠，重構後重跑仍為綠，不得為了看到 RED 而硬生一支沒有新行為的測試。兩條路徑的細節見 `implementation-rules.md` 的 TDD 覆寫 2。測試與實作同屬一個 commit。
-- **GREEN 與重構完成後、`git commit` 之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試（**含它們落進的同構家族是否因此達到 3 支**），把只為驅動 TDD 而生的暫時性測試併掉或刪掉，讓這個 commit 只帶進值得長期保留的測試。**不得另開 cleanup commit 補做。**
+- **GREEN 與重構完成後、`git commit` 之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試（**含它們落進的同構家族是否因此達到門檻——昂貴層數 case 數、便宜層數方法數**，以及本次是否往既有參數化測試加了說不出獨立保護對象的 `DataRow`），把只為驅動 TDD 而生的暫時性測試併掉或刪掉，讓這個 commit 只帶進值得長期保留的測試。**不得另開 cleanup commit 補做。**
 - 每個 commit 完成後**直接 `git commit`**，不徵詢——這是本 skill 與 `implement-stepwise` 的核心差異。
 - **定期執行 typecheck，並跑與當下變更相關的測試**；不要累積到最後才一次驗證。範圍依測試性質分流：
   - **不寫外部狀態的測試（純單元測試）** —— 整個測試檔跑完。沒有副作用，順帶擋住同檔既有測試的回歸。
-  - **會寫 DB、檔案等外部狀態的測試（整合測試、UI 測試）** —— 只跑本次新增或修改的測試方法。整檔逐 commit 重複跑會反覆寫入測試資料，同檔其餘測試留給收尾那一輪的測試專案全跑。
+  - **會寫 DB、檔案等外部狀態的測試（整合測試、UI 測試）** —— 只跑本次新增或修改的測試方法。整檔逐 commit 重複跑會反覆寫入測試資料，同檔其餘測試留給收尾那一輪的測試專案全跑。**兩個例外**：本次是收斂型 commit（刪、併、改既有測試）時整個測試類別跑完，本次動到共用測試基礎設施（base class、fixture、測試替身）時整個測試專案跑完——見 `implementation-rules.md` 的「重跑範圍」。
   - **分流依你手上已有的資訊判定，不另外開調查。** 依據是本次寫測試時已經看過的東西（測試檔的 arrange 段、繼承的 base class、用的是替身還是真實 DbContext）。**不要為了判定去追 base class、fixture、DI 註冊或設定檔**——那條相依鏈讀下去的成本遠超過它省的測試時間。判斷不出來就當作會寫外部狀態，只跑本次新增的。
 - 每個 commit 完成時，依「邊做邊記」記下本次**留下來**的測試與涵蓋的驗收條件，以及該次 consolidation 刪／併了什麼、該行為現在由誰守；收尾時併入最終回報，並依「寫回 ticket」在核對表後補一行 consolidation 摘要。**本 skill 自動提交，使用者看不到過程**——consolidation 若沒寫進回報，就等於靜默刪測試。
 
