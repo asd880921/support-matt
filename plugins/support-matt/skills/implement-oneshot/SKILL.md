@@ -88,7 +88,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 依 `implementation-rules.md` 的 TDD 規範，逐個 commit 完成：
 
 - **新增或改變 observable behavior 的 commit 走完整的紅綠循環**（是否走 TDD 不由你判斷）；**純 behavior-preserving refactor 走另一條路徑**——先確認既有測試涵蓋該行為且為綠，重構後重跑仍為綠，不得為了看到 RED 而硬生一支沒有新行為的測試。兩條路徑的細節見 `implementation-rules.md` 的 TDD 覆寫 2。測試與實作同屬一個 commit。
-- **GREEN 與重構完成後、`git commit` 之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試（**含它們落進的同構家族是否因此達到 3 支**），把只為驅動 TDD 而生的暫時性測試併掉或刪掉，讓這個 commit 只帶進值得長期保留的測試。**不得另開 cleanup commit 補做。**
+- **GREEN 與重構完成後、`git commit` 之前**，依 `implementation-rules.md` 的「Test Consolidation」檢視本次新增或修改的測試（**含它們落進的同構家族是否因此達到門檻——昂貴層數 case 數、便宜層數方法數**，以及本次是否往既有參數化測試加了說不出獨立保護對象的 `DataRow`），把只為驅動 TDD 而生的暫時性測試併掉或刪掉，讓這個 commit 只帶進值得長期保留的測試。**不得另開 cleanup commit 補做。**
 - 每個 commit 完成後**直接 `git commit`**，不徵詢——這是本 skill 與 `implement-stepwise` 的核心差異。
 - **定期執行 typecheck，並跑與當下變更相關的測試**；不要累積到最後才一次驗證。範圍依測試性質分流：
   - **不寫外部狀態的測試（純單元測試）** —— 整個測試檔跑完。沒有副作用，順帶擋住同檔既有測試的回歸。
