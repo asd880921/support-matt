@@ -1,6 +1,6 @@
 # support-matt
 
-套件版本：`v0.17.7`
+套件版本：`v0.17.8`
 更新時間：2026-08-28
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json 與 .codex-plugin/plugin.json，發版時三處版本與此處日期一併更新 -->
@@ -66,9 +66,11 @@ grill-with-docs → to-spec ─┬─ 設計後補　 → [to-issue-doc brief] �
 | Reference | 內容 |
 | --- | --- |
 | `token-discipline.md` | 探索優先序（圖譜優先）、三條防呆、回合數成本 |
-| `implementation-rules.md` | TDD 三條覆寫、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記 |
+| `implementation-rules.md` | TDD 三條覆寫、測試層級（入場規則與成本歸屬）、Test Consolidation、程式碼與註解規範、commit 格式、邊做邊記 |
 
 其中 **Test Consolidation** 是為了壓住 TDD 的測試膨脹：GREEN 之後、commit 之前檢視本次新增或修改的測試，把只為取得 RED/GREEN 回饋而生的暫時性測試、重複的 observable behavior 覆蓋、可參數化的同質 cases，以及沒有保護不同風險的跨層級重複併掉或刪掉，讓每個 commit 直接帶進值得長期保留的那一份，**不留 `test: remove redundant tests` 這種收尾 commit**。驗收條件與測試**不要求 1:1**，要成立的是覆蓋的可追溯性。跨 ticket 才浮現的重複由 `to-acceptance-map` 偵測回報，屬於例外的 branch 層 cleanup。
+
+它的上游是**測試層級的入場規則**：整合／UI 測試只用於單元測試無法真正驗證的部分，決定 seam 時就先拿要斷言的旗標／欄位名回便宜層搜尋，能在便宜層完整覆蓋的行為不進昂貴層——測試寫完之後再改層級就是重寫。判準在昂貴層一律**以 case 數計**（一支參數化測試帶 N 列就算 N 次真實環境往返），因為併成參數化只省維護成本、一秒執行時間都不省；已參數化的測試繼續加列時，逐列說不出獨立的保護對象就不加。
 
 ## 待補
 
