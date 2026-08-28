@@ -1,6 +1,6 @@
 # support-matt
 
-套件版本：`v0.17.6`
+套件版本：`v0.17.7`
 更新時間：2026-08-28
 安裝教程：[INSTALL.md](./INSTALL.md)
 <!-- 版本對齊 plugins/support-matt/.claude-plugin/plugin.json 與 .codex-plugin/plugin.json，發版時三處版本與此處日期一併更新 -->
@@ -25,7 +25,7 @@
 | `to-engineering-spec` | 同一種文件，但**動工前一次寫到位**：系統分析、技術設計、實作約束都在拆票前定版、經審查後才動手。差別不在誰的規則比較嚴，而在設計要不要先成為「被遵守的約束」——動角色權限、動 schema 牽動交易邊界、改變既有架構假設，或公司要求動工前提交完整設計時，事後補寫就來不及了。 |
 | `engineering-spec-deliverable` | 把工作版 `engineering-spec.md` 轉成可獨立閱讀、可直接貼上公司 GitLab Issue 的交付版。 |
 | `implement-oneshot` | 取代 `implement`（**一路做完**）：單一 session 做完整張票，形狀貼近原生，但開場先評估規模、收尾（測試 + 逐條核對驗收條件 + 寫回 ticket）做完即結束，**不跑也不引導 `code-review`**。 |
-| `implement-stepwise` | `implement-oneshot` 的變體（**即時插手**）：核心完全相同，只差每個 commit 送出前停下，附完整 commit message 與變更清單等你過目；回「繼續」才提交並接著做下一個 commit。不預先產 commit checklist。 |
+| `implement-stepwise` | `implement-oneshot` 的變體（**即時插手**）：核心完全相同，只差每個 commit 送出前停下，附完整 commit message 與變更清單等你過目；回「繼續」才提交並接著做下一個 commit；沒有更多 commit 時，收尾開始前再停一次預告。不預先產 commit checklist。 |
 | `to-acceptance-map` | branch 開發完畢後於**獨立 session** 盤點測試覆蓋，產出 `acceptance-map.md`。驗證基準只認規格文件的 `VC-xx`，不拿 ticket 充數。四級判定區分「需補測試」與「不適用測試」，另檢出可能已失效的測試與潛在重複覆蓋（只偵測、不動測試）。回報只呈現例外，全程唯讀。 |
 | `to-change-request` | 開發中途改動的**再入點**：grill 完接這一支，一次做完 `spec.md` delta、規格文件修訂（委派給該 feature 實際用的 `to-issue-doc` 或 `to-engineering-spec`）與追加 ticket，一個確認關卡。純實作的改動直接請你去 implement，不動文件。 |
 | `to-code-review` | Matt `code-review` 的**上層入口**：自家 branch 只需給目標分支，規格由 feature 目錄自動取得、`REVIEW.md` 寫回該目錄；代審他人 MR 則另外要背景說明，寫到 `.ai/code-review/`。兩軸結果一律過證據門檻後才輸出 P0–P3 findings。 |
