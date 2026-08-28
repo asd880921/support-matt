@@ -97,7 +97,7 @@ description: 在單一 session 內把一整張 ticket 做完，形狀貼近 Matt
 
 ## 4. 收尾
 
-依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 5——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
+依 `implementation-rules.md` 的「收尾」執行——跑受影響範圍的測試、**做一次跨層重複檢查**、逐條核對驗收條件、**把核對結果寫回 ticket**（勾選達成項 + append 帶證據的核對表）、回報。**不詢問冷眼審查**（覆寫 `implementation-rules.md` 收尾步驟 6——那一步在本 skill 不執行），**不跑完整測試套件**（那是 `to-acceptance-map` 在 branch 結束時的工作），**不判斷 scope creep 或實作對錯**，**不開 sub-agent**，**發現問題不要就地修掉再 commit**——本 skill 會自動 commit，靜默修正會產生使用者沒預期也沒看過的 commit。
 
 **寫回 ticket 對本 skill 特別重要。** 核對結果若只留在對話裡，這張票在檔案上就完全沒有交付紀錄。因此在核對表的「依據」欄一併帶入各 commit 的測試名稱（邊做邊記的內容），讓 ticket 自己說得出這張票交付了什麼、由什麼證明。
 
