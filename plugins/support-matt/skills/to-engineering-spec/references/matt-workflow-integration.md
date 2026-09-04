@@ -68,8 +68,8 @@ Matt Spec 已經寫了 user stories、Out of Scope、Testing Decisions。本文�
 
 ## 公司 GitLab 的界線
 
-- 本 skill **不建立、不修改、不留言、不關閉**任何遠端 Issue。不呼叫 `gitlab-issue-write`，不呼叫 `gh issue`，不呼叫 `glab`。
-- 公司 GitLab Issue 可以作為**輸入**（PRD 來源），透過 `gitlab-issue-fetch` 或使用者直接貼上。
+- 本 skill **不建立、不修改、不留言、不關閉**任何遠端 Issue。不呼叫 `gh issue`，也不呼叫 `glab` 的任何寫入子指令（`issue create` / `update` / `note` / `close` / `reopen` / `delete`、`mr create` 等），不以 `glab api` 發出非 GET 請求。
+- 公司 GitLab Issue 可以作為**輸入**（PRD 來源），透過 `glab issue view` 讀取，或使用者直接貼上。
 - Matt 的 Spec 與 Tickets 留在 `.ai/.scratch/`，不上 GitLab——這正是 tracker 設成 Local markdown 的目的：避免公司 GitLab 被大量 Agent 工作 Issue 汙染。
 - `engineering-spec.md` 由**使用者自己**決定何時貼回公司 GitLab Issue。
 - **本文件是工作版，不是交付版。** 它帶著 `./spec.md` 的相對連結、ADR 編號引用與給 `to-tickets` 的 handoff——這三樣在管線裡都是必要的，貼上 Issue 後卻全部失效：Issue 上沒有 `./spec.md`，相對連結是死的，handoff 是內部工作註記。

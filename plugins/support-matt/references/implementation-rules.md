@@ -226,7 +226,7 @@ consolidation 是該 commit 的一部分，發生在 commit **之前**。每個 
 
 - 允許的 type 僅 `feat`、`fix`、`refactor`、`chore`、`test`。
 - Commit type prefix 保持英文，描述以繁體中文撰寫。
-- 若本次工作有已知的來源 issue 編號（例如經 `gitlab-issue-fetch` 取得的 GitLab issue），每則 commit message 都必須包含 `#<issue_number>`；純本地 ticket 無此編號時省略。
+- 若本次工作有已知的來源 issue 編號（例如經 `glab` 取得的 GitLab issue），每則 commit message 都必須包含 `#<issue_number>`；純本地 ticket 無此編號時省略。
 - 測試與其對應的實作屬於**同一個 commit**，不另拆。
 
 ## 收尾

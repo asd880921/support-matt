@@ -1,6 +1,6 @@
 ---
 name: setup-matt-preset
-description: 以個人慣例初始化 Matt Pocock skills 的 per-repo 設定。承接 Matt 的 setup-matt-pocock-skills 流程，但預先套用三項固定慣例：一律使用 local markdown issue tracker（GitLab 只讀不寫，經 gitlab-issue-fetch）、所有根層產物改放 .ai/ 下一層、Matt 原本要寫進 CLAUDE.md 的 Agent skills 區塊改存為 .ai/docs/agents/workflow.md 並在 CLAUDE.md（及 AGENTS.md，若存在）以 @ 匯入。當使用者要在新專案初始化 Matt workflow 時使用，取代直接調用 setup-matt-pocock-skills。
+description: 以個人慣例初始化 Matt Pocock skills 的 per-repo 設定。承接 Matt 的 setup-matt-pocock-skills 流程，但預先套用三項固定慣例：一律使用 local markdown issue tracker（GitLab 只讀不寫，經 glab CLI）、所有根層產物改放 .ai/ 下一層、Matt 原本要寫進 CLAUDE.md 的 Agent skills 區塊改存為 .ai/docs/agents/workflow.md 並在 CLAUDE.md（及 AGENTS.md，若存在）以 @ 匯入。當使用者要在新專案初始化 Matt workflow 時使用，取代直接調用 setup-matt-pocock-skills。
 ---
 
 # setup-matt-preset
@@ -42,8 +42,11 @@ Matt 的 `setup-matt-pocock-skills` frontmatter 有 `disable-model-invocation: t
 
 本 repo 的 issue tracker 是上述 local markdown。當使用者另外提供 GitLab issue 作為需求來源時：
 
-- **只可讀取**：以 `gitlab-issue-fetch` skill 取得 issue 內容與討論串。
-- **不可寫入**：不得建立、更新、留言或關閉任何 GitLab issue。所有產出一律寫回本地 markdown。
+- **只可讀取**：以 `glab` CLI 取得 issue 內容與討論串，例如 `glab issue view <number>`、`glab issue view <number> --comments`、`glab issue list`。
+- **不可寫入**：不得執行 `glab issue create` / `update` / `note` / `close` / `reopen` / `delete`，也不得以 `glab api` 發出任何非 GET 請求。
+- 所有產出一律寫回本地 markdown，不上 GitLab。
+
+建議 glab 使用的 Personal Access Token 只給 `read_api` scope，讓唯讀在 token 層級就成立，不必只靠上述規則。
 ```
 
 #### 覆寫 B — 所有根層產物下移一層到 `.ai/`

@@ -155,7 +155,7 @@ Matt 的 Spec 模板允許放 API contracts 與 technical clarifications，裡�
 
 會主動讀取（存在時）：現有程式碼、`.ai/CONTEXT.md` / `.ai/CONTEXT-MAP.md`、`.ai/docs/adr/`、`.ai/.scratch/<feature-slug>/issues/`。
 
-選填：公司 PRD 或 GitLab Issue 內容（可直接貼上，或提供 `project_id` 與 `issue_number` 透過 `gitlab-issue-fetch` 取得，**只讀不寫**）、輸出路徑、語言覆蓋設定。
+選填：公司 PRD 或 GitLab Issue 內容（可直接貼上，或提供 issue 編號由 `glab issue view` 取得，**只讀不寫**）、輸出路徑、語言覆蓋設定。
 
 預設輸出語言：Skill 指令與內部推理可用英文；最終 Markdown 文件與釐清提問一律繁體中文，用台灣軟體開發常用語，避免生硬 AI 用詞。
 
@@ -173,7 +173,7 @@ Matt 的 issue tracker 設定為 Local markdown 時，同一功能的產物集�
 
 `<feature-slug>` **沿用 Matt Spec 已經建立的那個目錄名，不自己另取**。開工前先確認 `.ai/docs/agents/issue-tracker.md` 的設定；非 Local markdown 時本地沒有 `.ai/.scratch/<feature-slug>/` 可用，改與使用者確認落點（建議 `docs/specs/<feature-slug>/engineering-spec.md`），並在文件資訊記錄 Matt Spec 的 Issue 連結取代相對路徑。
 
-**本 skill 預設不修改任何遠端 Issue。** 不呼叫 `gitlab-issue-write`、不呼叫 `gh issue`、不建立、不留言、不關閉。
+**本 skill 預設不修改任何遠端 Issue。** 不以 `gh` 或 `glab` 寫入任何遠端 Issue，不建立、不留言、不關閉。
 
 寫入本地檔案後，**在 Matt Spec 頂部加一行指標**（若尚未存在）：
 
